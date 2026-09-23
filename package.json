@@ -1,7 +1,7 @@
 {
   "name": "theaestheticslyrics",
   "productName": "theaestheticslyrics",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Word-by-word synced lyrics for Spotify and Apple Music on Windows, on a full-screen lyrics screen or an always-on overlay.",
   "private": true,
   "main": "./out/main/index.js",

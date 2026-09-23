@@ -15,7 +15,7 @@ It's a Windows take on [Verci](https://verci.xyz), a Mac app. It's free and open
 
 ## Download
 
-1. Download **`theaestheticslyrics-1.0.0-win-x64.zip`** from the [latest release](https://github.com/darshanseenivasakumar/theaestheticslyrics/releases/latest). It needs Windows 10 or 11, 64-bit.
+1. Download the **`theaestheticslyrics-<version>-win-x64.zip`** file from the [latest release](https://github.com/darshanseenivasakumar/theaestheticslyrics/releases/latest). It needs Windows 10 or 11, 64-bit.
 2. Unzip it anywhere you like.
 3. Run **`theaestheticslyrics.exe`**. There's nothing to install. To uninstall, delete the folder.
 
