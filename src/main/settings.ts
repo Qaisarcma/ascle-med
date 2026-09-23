@@ -20,7 +20,7 @@ export interface Settings {
   /** Follow every media app, not just Spotify and Apple Music. */
   allPlayers: boolean
   launchAtLogin: boolean
-  /** The first-run "Wordlit is running" notice has been shown. */
+  /** The first-run "theaestheticslyrics is running" notice has been shown. */
   welcomed: boolean
   /**
    * Ctrl+Alt+L locks Windows when you come back (any input closes the lyrics screen).

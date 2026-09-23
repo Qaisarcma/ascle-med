@@ -3,13 +3,13 @@ import { join } from 'node:path'
 import type { TrackQuery } from './match'
 import { cleanTitle, normalizeForMatch, primaryArtist } from './normalize'
 
-const README = `Wordlit — your own lyrics
+const README = `theaestheticslyrics — your own lyrics
 =========================
 
 Drop synced lyric files here to use them instead of the online database.
 
 Name each file:   <Artist> - <Title>.lrc
-Example:          Wordlit Test Band - Paper Lanterns.lrc
+Example:          Lantern Test Band - Paper Lanterns.lrc
 
 Standard LRC lines work:        [00:12.30]a line of words
 Word-level ("enhanced") LRC is used exactly when present:

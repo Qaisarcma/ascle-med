@@ -75,7 +75,7 @@ export function statusLine(m: Pick<TrayModel, 'track' | 'lyricsStatus' | 'health
   }
 }
 
-/** The Wordlit tray icon and its menu (Windows' counterpart to Verci's menu bar dropdown). */
+/** The theaestheticslyrics tray icon and its menu (Windows' counterpart to Verci's menu bar dropdown). */
 export class TrayMenu {
   private readonly tray: Tray
   private model: TrayModel | null = null
@@ -87,7 +87,7 @@ export class TrayMenu {
     private readonly actions: TrayActions
   ) {
     this.tray = new Tray(iconPath)
-    this.tray.setToolTip('Wordlit')
+    this.tray.setToolTip('theaestheticslyrics')
     this.tray.on('click', () => this.tray.popUpContextMenu())
   }
 
@@ -137,7 +137,7 @@ export class TrayMenu {
     })
 
     const template: MenuItemConstructorOptions[] = [
-      { label: 'Wordlit', enabled: false },
+      { label: 'theaestheticslyrics', enabled: false },
       { label: menuText(statusLine(m), 60), enabled: false },
       { type: 'separator' },
       {
@@ -206,11 +206,11 @@ export class TrayMenu {
         click: (item) => a.setLaunchAtLogin(item.checked)
       },
       { type: 'separator' },
-      { label: 'Quit Wordlit', click: () => a.quit() }
+      { label: 'Quit theaestheticslyrics', click: () => a.quit() }
     ]
 
     this.tray.setContextMenu(Menu.buildFromTemplate(template))
-    const tip = m.track?.title ? `Wordlit — ${m.track.title}${m.track.artist ? ` · ${m.track.artist}` : ''}` : 'Wordlit'
+    const tip = m.track?.title ? `theaestheticslyrics — ${m.track.title}${m.track.artist ? ` · ${m.track.artist}` : ''}` : 'theaestheticslyrics'
     this.tray.setToolTip(tip.length > 120 ? `${tip.slice(0, 119)}…` : tip)
   }
 }

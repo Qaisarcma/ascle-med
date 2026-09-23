@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
-import { IPC, type WordlitApi } from '@shared/ipc'
+import { IPC, type LyricsAppApi } from '@shared/ipc'
 
 function subscribe<T>(channel: string, cb: (payload: T) => void): () => void {
   const listener = (_event: IpcRendererEvent, payload: T): void => cb(payload)
@@ -9,7 +9,7 @@ function subscribe<T>(channel: string, cb: (payload: T) => void): () => void {
   }
 }
 
-const api: WordlitApi = {
+const api: LyricsAppApi = {
   stage: {
     onState: (cb) => subscribe(IPC.stageState, cb),
     onAnchor: (cb) => subscribe(IPC.stageAnchor, cb),
@@ -31,4 +31,4 @@ const api: WordlitApi = {
   }
 }
 
-contextBridge.exposeInMainWorld('wordlit', api)
+contextBridge.exposeInMainWorld('lyricsApp', api)

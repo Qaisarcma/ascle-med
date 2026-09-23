@@ -1,8 +1,8 @@
-import type { WordlitApi } from '../shared/ipc'
+import type { LyricsAppApi } from '../shared/ipc'
 
 declare global {
   interface Window {
-    wordlit: WordlitApi
+    lyricsApp: LyricsAppApi
   }
 }
 

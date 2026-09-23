@@ -3,7 +3,7 @@ import type { FetchLike } from '../src/main/lyrics/lrclib'
 import type { TrackQuery } from '../src/main/lyrics/match'
 import { NeteaseClient } from '../src/main/lyrics/netease'
 
-// Original test text written for Wordlit (not a real song), in NetEase's word-timed format.
+// Original test text written for theaestheticslyrics (not a real song), in NetEase's word-timed format.
 const YRC = [
   '{"t":0,"c":[{"tx":"credits"}]}',
   '[1000,3200](1000,400,0)Paper (1400,600,0)lanterns (2000,500,0)drifting',
@@ -11,9 +11,9 @@ const YRC = [
   '[8000,1200](8000,600,0)Hold (8600,600,0)the (9200,600,0)light'
 ].join('\n')
 
-const query: TrackQuery = { title: 'Paper Lanterns', artist: 'Wordlit Test Band', album: 'Fixtures', durationMs: 32_400 }
+const query: TrackQuery = { title: 'Paper Lanterns', artist: 'Lantern Test Band', album: 'Fixtures', durationMs: 32_400 }
 
-const song = (id: number, name: string, seconds: number, artist = 'Wordlit Test Band', album = 'Fixtures') => ({
+const song = (id: number, name: string, seconds: number, artist = 'Lantern Test Band', album = 'Fixtures') => ({
   id,
   name,
   ar: [{ name: artist }],
@@ -49,7 +49,7 @@ describe('NeteaseClient.find', () => {
     const result = await client(s.fetch).find(query)
     expect(result.status === 'found' && result.song.id).toBe(2)
     expect(result.status === 'found' && result.yrc).toBe(YRC)
-    expect(s.urls[0]).toContain('/api/cloudsearch/pc?s=Paper+Lanterns+Wordlit+Test+Band&type=1')
+    expect(s.urls[0]).toContain('/api/cloudsearch/pc?s=Paper+Lanterns+Lantern+Test+Band&type=1')
     expect(s.urls[1]).toContain('/api/song/lyric/v1?id=2&')
     expect(s.headers[0]?.Referer).toBe('https://music.163.com/')
   })

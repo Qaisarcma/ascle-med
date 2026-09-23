@@ -1,7 +1,7 @@
 version: "1.0"
 metadata:
   title: Paper Lanterns
-  artist: Wordlit Test Band
+  artist: Lantern Test Band
   album: Fixtures
   duration_ms: 32000
   instrumental: false

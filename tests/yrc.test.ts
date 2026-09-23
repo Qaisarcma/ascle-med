@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { parseYrc } from '../src/main/lyrics/yrc'
 import { buildTimedLyrics } from '../src/main/lyrics/word-timing'
 
-// Original test text written for Wordlit (not a real song), in NetEase's word-timed format.
+// Original test text written for theaestheticslyrics (not a real song), in NetEase's word-timed format.
 const FIXTURE = [
-  '{"t":0,"c":[{"tx":"Test credits: "},{"tx":"Wordlit"}]}',
+  '{"t":0,"c":[{"tx":"Test credits: "},{"tx":"theaestheticslyrics"}]}',
   '[1000,3200](1000,400,0)Paper (1400,600,0)lanterns (2000,500,0)drifting (2500,300,0)over (2800,700,0)quiet (3500,700,0)water',
   '[4200,1500](4200,300,0)Ev(4500,300,0)ery (4800,500,0)window (5300,400,0)keeps',
   '',

@@ -2,7 +2,7 @@ import '../css/colors.css'
 import type { ColorsState } from '@shared/ipc'
 import type { ColorRole } from '@shared/types'
 
-const api = window.wordlit.colors
+const api = window.lyricsApp.colors
 
 const ROLES: { role: ColorRole; name: string; hint: string }[] = [
   { role: 'lyric', name: 'Lyric Text', hint: 'Words already sung' },

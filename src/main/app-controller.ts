@@ -19,6 +19,8 @@ import { StageController } from './ui/stage-controller'
 import { TrayMenu, type TrayActions } from './ui/tray'
 
 export const HOTKEY = 'CommandOrControl+Alt+L'
+/** LRCLIB asks every client to name itself and link to its homepage. */
+const HOMEPAGE = 'https://github.com/darshanseenivasakumar/theaestheticslyrics'
 /** Players publish title/artist/album in steps; wait for them to settle before looking up lyrics. */
 const TRACK_SETTLE_MS = 350
 const ERROR_RETRY_MS = 2 * 60 * 1000
@@ -73,7 +75,7 @@ export class AppController {
     this.lyrics = new LyricsService({
       local: this.local,
       cache: new LyricsCache(this.paths.cacheDir),
-      client: new LrclibClient({ userAgent: `Wordlit/${app.getVersion()} (Windows lyrics overlay)` }),
+      client: new LrclibClient({ userAgent: `theaestheticslyrics/${app.getVersion()} (${HOMEPAGE})` }),
       log: this.log,
       wordLevel: { client: new NeteaseClient(), enabled: () => this.settings.get().wordLevel }
     })
@@ -125,7 +127,7 @@ export class AppController {
 
     if (!this.settings.get().welcomed) {
       this.tray.balloon(
-        'Wordlit is running',
+        'theaestheticslyrics is running',
         'Play something in Spotify or Apple Music, then press Ctrl+Alt+L for full-screen lyrics (Esc closes). All settings are in the tray icon.'
       )
       this.settings.update({ welcomed: true })
@@ -146,7 +148,7 @@ export class AppController {
     this.tray?.destroy()
   }
 
-  /** Wordlit was opened again (e.g. its desktop icon) while already running: show the lyrics. */
+  /** theaestheticslyrics was opened again (e.g. its desktop icon) while already running: show the lyrics. */
   showLyrics(): void {
     void this.stage?.showLyrics()
   }

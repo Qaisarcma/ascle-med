@@ -55,7 +55,7 @@ export interface ColorsState {
   effective: Palette
 }
 
-export interface WordlitStageApi {
+export interface StageApi {
   onState(cb: (state: StageState) => void): () => void
   onAnchor(cb: (anchor: PlaybackAnchor) => void): () => void
   onSnapshot(cb: (req: SnapshotRequest) => void): () => void
@@ -65,7 +65,7 @@ export interface WordlitStageApi {
   dismiss(request: DismissRequest): void
 }
 
-export interface WordlitColorsApi {
+export interface ColorsApi {
   get(): Promise<ColorsState>
   set(role: ColorRole, hex: string): void
   setAutoSync(on: boolean): void
@@ -73,7 +73,7 @@ export interface WordlitColorsApi {
   onState(cb: (state: ColorsState) => void): () => void
 }
 
-export interface WordlitApi {
-  stage: WordlitStageApi
-  colors: WordlitColorsApi
+export interface LyricsAppApi {
+  stage: StageApi
+  colors: ColorsApi
 }

@@ -1,13 +1,14 @@
-// Packages the built app (out/) into a portable folder: release/Wordlit-win32-x64/Wordlit.exe
-// No installer, like Verci: copy the folder anywhere and run Wordlit.exe.
+// Packages the built app (out/) into a portable folder: release/theaestheticslyrics-win32-x64/theaestheticslyrics.exe
+// No installer: copy the folder anywhere and run theaestheticslyrics.exe.
 import { spawnSync } from 'node:child_process'
-import { existsSync, readFileSync, rmSync } from 'node:fs'
+import { copyFileSync, existsSync, readFileSync, rmSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { packager } from '@electron/packager'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
+const AUTHOR = 'darshanseenivasakumar'
 
 if (!existsSync(join(root, 'out', 'main', 'index.js'))) {
   console.error('out/ is missing: run "npm run build" first')
@@ -17,8 +18,8 @@ if (!existsSync(join(root, 'out', 'main', 'index.js'))) {
 const [appDir] = await packager({
   dir: root,
   out: join(root, 'release'),
-  name: 'Wordlit',
-  executableName: 'Wordlit',
+  name: 'theaestheticslyrics',
+  executableName: 'theaestheticslyrics',
   appVersion: pkg.version,
   platform: 'win32',
   arch: 'x64',
@@ -31,24 +32,28 @@ const [appDir] = await packager({
   ignore: [
     // Every library is bundled into out/ by electron-vite, so nothing from node_modules ships.
     /^\/node_modules(\/|$)/,
-    /^\/(src|tests|tests-live|scripts|docs|snapshots|release|resources|\.remember|\.git|\.claude)(\/|$)/,
+    /^\/(src|tests|tests-live|scripts|docs|snapshots|release|resources|\.remember|\.git|\.github|\.claude)(\/|$)/,
     /^\/(electron\.vite|vitest|vitest\.live)\.config\.ts$/,
     /^\/tsconfig[^/]*\.json$/,
-    /^\/\.gitignore$/
+    /^\/(\.gitignore|\.gitattributes|README\.md|LICENSE|THIRD_PARTY_NOTICES\.md)$/
   ],
-  appCopyright: 'Wordlit',
+  appCopyright: `Copyright © 2026 ${AUTHOR}`,
   win32metadata: {
-    CompanyName: 'Wordlit',
-    FileDescription: 'Wordlit',
-    ProductName: 'Wordlit',
-    InternalName: 'Wordlit',
-    OriginalFilename: 'Wordlit.exe'
+    CompanyName: 'theaestheticslyrics',
+    FileDescription: 'theaestheticslyrics',
+    ProductName: 'theaestheticslyrics',
+    InternalName: 'theaestheticslyrics',
+    OriginalFilename: 'theaestheticslyrics.exe'
   }
 })
 console.log(`packaged: ${appDir}`)
 
+// The folder root already holds Electron's own LICENSE, so ours ship under distinct names.
+copyFileSync(join(root, 'LICENSE'), join(appDir, 'LICENSE.theaestheticslyrics.txt'))
+copyFileSync(join(root, 'THIRD_PARTY_NOTICES.md'), join(appDir, 'THIRD_PARTY_NOTICES.txt'))
+
 // A zip of the folder is handy for moving it to another PC.
-const zip = join(root, 'release', `Wordlit-${pkg.version}-win-x64.zip`)
+const zip = join(root, 'release', `theaestheticslyrics-${pkg.version}-win-x64.zip`)
 rmSync(zip, { force: true })
 const result = spawnSync(
   'powershell.exe',

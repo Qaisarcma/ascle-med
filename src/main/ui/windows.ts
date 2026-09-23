@@ -5,7 +5,7 @@ export type Page = 'stage' | 'colors'
 
 export const preloadPath = (): string => join(__dirname, '../preload/index.js')
 
-/** Locked-down defaults for every Wordlit window. */
+/** Locked-down defaults for every theaestheticslyrics window. */
 export function secureWebPreferences(extra: WebPreferences = {}): WebPreferences {
   return {
     preload: preloadPath(),

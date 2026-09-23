@@ -1,5 +1,5 @@
 <#
-  Wordlit media bridge.
+  theaestheticslyrics media bridge.
 
   Reads Windows' media sessions (System Media Transport Controls) and prints one
   JSON object per line on stdout:

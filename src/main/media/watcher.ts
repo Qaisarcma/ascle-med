@@ -42,7 +42,7 @@ const defaultPowershell = (): string =>
 
 /**
  * Supervises `smtc-bridge.ps1` (Windows PowerShell 5.1) and turns its snapshots into
- * `track` / `anchor` / `artwork` events for the one session Wordlit follows.
+ * `track` / `anchor` / `artwork` events for the one session theaestheticslyrics follows.
  */
 export class MediaWatcher extends EventEmitter<WatcherEvents> {
   private child: ChildProcess | null = null

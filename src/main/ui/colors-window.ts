@@ -57,7 +57,7 @@ export class ColorsWindow {
       maximizable: false,
       minimizable: false,
       fullscreenable: false,
-      title: 'Wordlit Colors',
+      title: 'theaestheticslyrics Colors',
       icon: this.deps.iconPath,
       backgroundColor: '#1c1c1e',
       autoHideMenuBar: true,

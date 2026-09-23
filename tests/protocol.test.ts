@@ -5,7 +5,7 @@ const session: RawSession = {
   app: 'Spotify.exe',
   status: 'Playing',
   title: 'Paper Lanterns',
-  artist: 'Wordlit Test Band',
+  artist: 'Lantern Test Band',
   album: 'Fixtures',
   pos: 12.5,
   start: 0,
@@ -51,6 +51,6 @@ describe('parseBridgeLine', () => {
 
 describe('rawKey', () => {
   it('joins the identity fields exactly like the bridge script', () => {
-    expect(rawKey(session)).toBe('Spotify.exe|Paper Lanterns|Wordlit Test Band|Fixtures')
+    expect(rawKey(session)).toBe('Spotify.exe|Paper Lanterns|Lantern Test Band|Fixtures')
   })
 })

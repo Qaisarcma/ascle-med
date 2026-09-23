@@ -1,10 +1,10 @@
 import type { TrackInfo } from './types'
 
 /**
- * An original demo song written for Wordlit (not a real track), used by snapshot mode and
+ * An original demo song written for theaestheticslyrics (not a real track), used by snapshot mode and
  * tests to exercise every display style. Its words deliberately include many that have icons.
  */
-export const DEMO_LRC = `[ar:Wordlit]
+export const DEMO_LRC = `[ar:theaestheticslyrics]
 [ti:Neon Butterflies]
 [00:01.00]Midnight city, every window burning
 [00:04.60]I can see a fire in your eyes
@@ -16,10 +16,10 @@ export const DEMO_LRC = `[ar:Wordlit]
 `
 
 export const DEMO_TRACK: TrackInfo = {
-  key: 'demo|Neon Butterflies|Wordlit|Demo',
+  key: 'demo|Neon Butterflies|theaestheticslyrics|Demo',
   app: 'demo',
   title: 'Neon Butterflies',
-  artist: 'Wordlit',
+  artist: 'theaestheticslyrics',
   album: 'Demo',
   durationMs: 26_000
 }

@@ -1,5 +1,6 @@
-// Renders Wordlit's original icon (a white "w" on the pink-red highlight colour, like a lit word)
-// to PNGs with Chromium and packs them into Windows .ico files. Run with: electron scripts/make-icons.mjs
+// Renders the app's original icon (a white "a" monogram with a small sparkle, on the pink-red highlight
+// colour of a lit word) to PNGs with Chromium and packs them into Windows .ico files.
+// Run with: electron scripts/make-icons.mjs
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -8,21 +9,35 @@ import { BrowserWindow, app } from 'electron'
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const out = join(root, 'resources')
 
-/** Thicker strokes and a squarer box at tiny sizes keep the tray icon crisp. */
+/** Four-point sparkle centred on (x, y): long tips at radius r, a pinched waist at r * 0.28. */
+function sparkle(x, y, r) {
+  const w = r * 0.28
+  return `M${x} ${y - r} L${x + w} ${y - w} L${x + r} ${y} L${x + w} ${y + w} L${x} ${y + r} L${x - w} ${y + w} L${x - r} ${y} L${x - w} ${y - w} Z`
+}
+
+/**
+ * A single-storey "a" (a round bowl with a stem on its right edge). Tiny sizes drop the sparkle and
+ * use a bigger, bolder letter with a squarer box so the tray icon stays crisp.
+ */
 function svg(size) {
   const small = size <= 24
-  const stroke = small ? 8.5 : 7
+  const stroke = small ? 8 : 6.5
   const radius = small ? 12 : 14
+  const bowl = small ? { x: 32, y: 32, r: 12 } : { x: 28, y: 35, r: 11 }
+  const stem = bowl.x + bowl.r
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#e0566f"/>
-      <stop offset="1" stop-color="#b8344f"/>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ea6a84"/>
+      <stop offset="1" stop-color="#b3304c"/>
     </linearGradient>
   </defs>
   <rect x="2" y="2" width="60" height="60" rx="${radius}" fill="url(#g)"/>
-  <polyline points="13,21 22,44 32,27 42,44 51,21" fill="none" stroke="#fff4f6"
-    stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="none" stroke="#fff4f6" stroke-width="${stroke}" stroke-linecap="round">
+    <circle cx="${bowl.x}" cy="${bowl.y}" r="${bowl.r}"/>
+    <line x1="${stem}" y1="${bowl.y - bowl.r}" x2="${stem}" y2="${bowl.y + bowl.r}"/>
+  </g>
+  ${small ? '' : `<path d="${sparkle(49, 15, 6.5)}" fill="#fff4f6"/>`}
 </svg>`
 }
 

@@ -104,7 +104,7 @@ export class StageController {
   }
 
   /**
-   * Shows the lyrics screen as a viewer (Esc closes, never locks Windows) — used when Wordlit
+   * Shows the lyrics screen as a viewer (Esc closes, never locks Windows) — used when theaestheticslyrics
    * is opened from its desktop icon. Unlike the hotkey, it never toggles an open screen closed.
    */
   async showLyrics(): Promise<void> {
@@ -317,7 +317,7 @@ export class StageController {
       focusable: kind === 'lock',
       transparent: kind === 'overlay',
       backgroundColor: kind === 'lock' ? '#000000' : '#00000000',
-      title: 'Wordlit',
+      title: 'theaestheticslyrics',
       webPreferences: secureWebPreferences()
     })
     win.setAlwaysOnTop(true, 'screen-saver')

@@ -1,5 +1,5 @@
 // Test helper: a hidden "music player" that shows up in Windows' media controls (SMTC) exactly
-// like Spotify does, but plays an inaudible tone. Lets Wordlit be tested end to end at any hour.
+// like Spotify does, but plays an inaudible tone. Lets theaestheticslyrics be tested end to end at any hour.
 //   electron scripts/fake-player/main.cjs [--title=..] [--artist=..] [--album=..] [--seconds=40] [--start=0]
 const { app, BrowserWindow } = require('electron')
 const path = require('node:path')
@@ -9,7 +9,7 @@ const arg = (name, fallback) => {
   return hit ? hit.slice(name.length + 3) : fallback
 }
 
-app.setAppUserModelId('Wordlit.FakePlayer')
+app.setAppUserModelId('theaestheticslyrics.FakePlayer')
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required')
 
 app.whenReady().then(async () => {
@@ -22,7 +22,7 @@ app.whenReady().then(async () => {
   await win.loadFile(path.join(__dirname, 'player.html'), {
     query: {
       title: arg('title', 'Paper Lanterns'),
-      artist: arg('artist', 'Wordlit Test Band'),
+      artist: arg('artist', 'Lantern Test Band'),
       album: arg('album', 'Fixtures'),
       seconds: arg('seconds', '40'),
       start: arg('start', '0')

@@ -5,7 +5,7 @@ import { createLogger } from './logger'
 import { resolvePaths } from './paths'
 import { runSnapshots } from './snapshot'
 
-// Wordlit never plays media itself, so it must not claim the keyboard media keys.
+// theaestheticslyrics never plays media itself, so it must not claim the keyboard media keys.
 app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling,MediaSessionService')
 
 const argValue = (name: string): string | undefined =>
@@ -20,14 +20,14 @@ const snapshotDir = argValue('snapshot')
 
 if (process.argv.includes('--smoke')) {
   void app.whenReady().then(() => {
-    console.log('WORDLIT_READY')
+    console.log('TAL_READY')
     app.quit()
   })
 } else if (snapshotDir) {
   void app.whenReady().then(async () => {
     try {
       const files = await runSnapshots({ outDir: resolve(snapshotDir) })
-      console.log(`WORDLIT_SNAPSHOTS ${files.length}`)
+      console.log(`TAL_SNAPSHOTS ${files.length}`)
       app.quit()
     } catch (err) {
       console.error('snapshot failed:', err)
@@ -47,12 +47,12 @@ function startApp(): void {
   const log = createLogger(paths.logFile, !app.isPackaged || process.argv.includes('--verbose'))
   process.on('uncaughtException', (err) => log(`error: uncaught ${err.stack ?? String(err)}`))
   process.on('unhandledRejection', (reason) => log(`error: unhandled rejection ${String(reason)}`))
-  app.setAppUserModelId('Wordlit')
+  app.setAppUserModelId('theaestheticslyrics')
 
   let controller: AppController | null = null
-  // The desktop icon again while Wordlit runs: show the lyrics instead of starting a second copy.
+  // The desktop icon again while theaestheticslyrics runs: show the lyrics instead of starting a second copy.
   app.on('second-instance', () => controller?.showLyrics())
-  // Wordlit lives in the tray; closing its windows must not quit it.
+  // theaestheticslyrics lives in the tray; closing its windows must not quit it.
   app.on('window-all-closed', () => undefined)
   app.on('will-quit', () => controller?.stop())
 

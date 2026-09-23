@@ -4,7 +4,7 @@ import { pickBest, scoreCandidate, type LrclibRecord, type TrackQuery } from '..
 const record = (over: Partial<LrclibRecord>): LrclibRecord => ({
   id: 1,
   trackName: 'Paper Lanterns',
-  artistName: 'Wordlit Test Band',
+  artistName: 'Lantern Test Band',
   albumName: 'Fixtures',
   duration: 32,
   instrumental: false,
@@ -14,7 +14,7 @@ const record = (over: Partial<LrclibRecord>): LrclibRecord => ({
   ...over
 })
 
-const query: TrackQuery = { title: 'Paper Lanterns', artist: 'Wordlit Test Band', album: 'Fixtures', durationMs: 32_000 }
+const query: TrackQuery = { title: 'Paper Lanterns', artist: 'Lantern Test Band', album: 'Fixtures', durationMs: 32_000 }
 
 describe('scoreCandidate', () => {
   it('scores an exact match highly', () => {
@@ -57,7 +57,7 @@ describe('scoreCandidate', () => {
   })
 
   it('tolerates featuring credits and casing', () => {
-    const q = { ...query, title: 'paper lanterns (feat. Guest)', artist: 'Wordlit Test Band, Guest' }
+    const q = { ...query, title: 'paper lanterns (feat. Guest)', artist: 'Lantern Test Band, Guest' }
     expect(scoreCandidate(q, record({}))).toBeGreaterThan(0.8)
   })
 })

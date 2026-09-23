@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
 import { DEFAULT_SETTINGS, SettingsStore, sanitizeSettings } from '../src/main/settings'
 
-const tempFile = (): string => join(mkdtempSync(join(tmpdir(), 'wordlit-settings-')), 'settings.json')
+const tempFile = (): string => join(mkdtempSync(join(tmpdir(), 'tal-settings-')), 'settings.json')
 
 describe('sanitizeSettings', () => {
   it('returns defaults for missing or non-object input', () => {

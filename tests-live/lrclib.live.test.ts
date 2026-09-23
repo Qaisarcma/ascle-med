@@ -11,11 +11,11 @@ import type { TrackQuery } from '../src/main/lyrics/match'
 import { NeteaseClient } from '../src/main/lyrics/netease'
 import { LyricsService } from '../src/main/lyrics/service'
 
-const base = mkdtempSync(join(tmpdir(), 'wordlit-live-'))
+const base = mkdtempSync(join(tmpdir(), 'tal-live-'))
 const service = new LyricsService({
   local: new LocalLyrics(join(base, 'none')),
   cache: new LyricsCache(join(base, 'cache')),
-  client: new LrclibClient({ userAgent: 'Wordlit/0.1.0 (Windows lyrics overlay; live check)' }),
+  client: new LrclibClient({ userAgent: 'theaestheticslyrics/1.0.0 (https://github.com/darshanseenivasakumar/theaestheticslyrics; live check)' }),
   log: () => {}
 })
 
@@ -51,7 +51,7 @@ describe('lrclib.net (live)', () => {
     const withWords = new LyricsService({
       local: new LocalLyrics(join(base, 'none')),
       cache: new LyricsCache(join(base, 'cache-words')),
-      client: new LrclibClient({ userAgent: 'Wordlit/0.1.0 (Windows lyrics overlay; live check)' }),
+      client: new LrclibClient({ userAgent: 'theaestheticslyrics/1.0.0 (https://github.com/darshanseenivasakumar/theaestheticslyrics; live check)' }),
       log: () => {},
       wordLevel: { client: new NeteaseClient(), enabled: () => true }
     })
@@ -63,7 +63,7 @@ describe('lrclib.net (live)', () => {
   }, 60_000)
 
   it('reports a clearly unknown song as not-found', async () => {
-    const result = await service.get({ title: 'Zzqx Wordlit Nonexistent Song', artist: 'Nobody Qqz', album: '', durationMs: 123_000 })
+    const result = await service.get({ title: 'Zzqx theaestheticslyrics Nonexistent Song', artist: 'Nobody Qqz', album: '', durationMs: 123_000 })
     expect(result.status).toBe('not-found')
   }, 60_000)
 })

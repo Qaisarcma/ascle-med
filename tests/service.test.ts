@@ -12,12 +12,12 @@ import { LyricsService, recordToTimedLyrics } from '../src/main/lyrics/service'
 const fixtures = join(__dirname, 'fixtures')
 const lrc = readFileSync(join(fixtures, 'original-song.lrc'), 'utf8')
 const yamlDoc = readFileSync(join(fixtures, 'original-song.lyricsfile.yaml'), 'utf8')
-const query: TrackQuery = { title: 'Paper Lanterns', artist: 'Wordlit Test Band', album: 'Fixtures', durationMs: 32_000 }
+const query: TrackQuery = { title: 'Paper Lanterns', artist: 'Lantern Test Band', album: 'Fixtures', durationMs: 32_000 }
 
 const record = (over: Partial<LrclibRecord> = {}): LrclibRecord => ({
   id: 1,
   trackName: 'Paper Lanterns',
-  artistName: 'Wordlit Test Band',
+  artistName: 'Lantern Test Band',
   albumName: 'Fixtures',
   duration: 32,
   instrumental: false,
@@ -27,7 +27,7 @@ const record = (over: Partial<LrclibRecord> = {}): LrclibRecord => ({
   ...over
 })
 
-// Original test text written for Wordlit (not a real song), in NetEase's word-timed format.
+// Original test text written for theaestheticslyrics (not a real song), in NetEase's word-timed format.
 const YRC = [
   '[1000,3200](1000,400,0)Paper (1400,600,0)lanterns (2000,500,0)drifting',
   '[4200,1500](4200,300,0)Every (4500,300,0)window (4800,500,0)keeps',
@@ -35,7 +35,7 @@ const YRC = [
 ].join('\n')
 
 function setup(find: () => Promise<FindResult>, word?: { find: () => Promise<NeteaseResult>; enabled?: boolean }) {
-  const base = mkdtempSync(join(tmpdir(), 'wordlit-service-'))
+  const base = mkdtempSync(join(tmpdir(), 'tal-service-'))
   const local = new LocalLyrics(join(base, 'local'))
   const cache = new LyricsCache(join(base, 'cache'))
   const client = { find: vi.fn(find) } as unknown as LrclibClient & { find: ReturnType<typeof vi.fn> }
@@ -54,7 +54,7 @@ function setup(find: () => Promise<FindResult>, word?: { find: () => Promise<Net
 const neteaseFound = async (): Promise<NeteaseResult> => ({
   status: 'found',
   yrc: YRC,
-  song: { id: 1, title: 'Paper Lanterns', artist: 'Wordlit Test Band', album: 'Fixtures', durationSec: 32 }
+  song: { id: 1, title: 'Paper Lanterns', artist: 'Lantern Test Band', album: 'Fixtures', durationSec: 32 }
 })
 
 describe('recordToTimedLyrics', () => {
@@ -78,7 +78,7 @@ describe('LyricsService.get', () => {
   it('uses a local .lrc file before the network', async () => {
     const s = setup(async () => ({ status: 'not-found' }))
     await s.local.ensureDir()
-    copyFileSync(join(fixtures, 'original-song.lrc'), join(s.base, 'local', 'Wordlit Test Band - Paper Lanterns.lrc'))
+    copyFileSync(join(fixtures, 'original-song.lrc'), join(s.base, 'local', 'Lantern Test Band - Paper Lanterns.lrc'))
     const result = await s.service.get(query)
     expect(result).toMatchObject({ status: 'found', source: 'local' })
     expect(s.client.find).not.toHaveBeenCalled()

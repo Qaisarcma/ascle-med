@@ -1,5 +1,7 @@
 # Wordlit — design spec
 
+> **Historical document.** The app was codenamed **Wordlit** while it was designed and built, and shipped as **theaestheticslyrics**. Names, paths and `WORDLIT_*` variables below use the old codename (they are now `theaestheticslyrics` and `TAL_*`).
+
 **Date:** 2026-09-23
 **Status:** Approved (stack, lock behaviour, lyrics source and name chosen by the user)
 

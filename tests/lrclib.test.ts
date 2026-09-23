@@ -2,12 +2,12 @@ import { describe, expect, it, vi } from 'vitest'
 import { LrclibClient, type FetchLike } from '../src/main/lyrics/lrclib'
 import type { LrclibRecord, TrackQuery } from '../src/main/lyrics/match'
 
-const query: TrackQuery = { title: 'Paper Lanterns', artist: 'Wordlit Test Band', album: 'Fixtures', durationMs: 32_400 }
+const query: TrackQuery = { title: 'Paper Lanterns', artist: 'Lantern Test Band', album: 'Fixtures', durationMs: 32_400 }
 
 const rec = (over: Partial<LrclibRecord> = {}): LrclibRecord => ({
   id: 7,
   trackName: 'Paper Lanterns',
-  artistName: 'Wordlit Test Band',
+  artistName: 'Lantern Test Band',
   albumName: 'Fixtures',
   duration: 32,
   instrumental: false,
@@ -34,7 +34,7 @@ function scripted(replies: Reply[]): { fetch: FetchLike; urls: string[]; headers
 }
 
 const client = (fetch: FetchLike, sleep = vi.fn(async (_ms: number) => {})) =>
-  new LrclibClient({ fetch, userAgent: 'Wordlit/test', sleep, baseUrl: 'https://lrclib.test' })
+  new LrclibClient({ fetch, userAgent: 'theaestheticslyrics/test', sleep, baseUrl: 'https://lrclib.test' })
 
 describe('LrclibClient.find', () => {
   it('uses /api/get with encoded parameters and the user agent', async () => {
@@ -42,9 +42,9 @@ describe('LrclibClient.find', () => {
     const result = await client(s.fetch).find({ ...query, title: 'Paper & Lanterns' })
     expect(result.status).toBe('found')
     expect(s.urls[0]).toBe(
-      'https://lrclib.test/api/get?track_name=Paper+%26+Lanterns&artist_name=Wordlit+Test+Band&album_name=Fixtures&duration=32'
+      'https://lrclib.test/api/get?track_name=Paper+%26+Lanterns&artist_name=Lantern+Test+Band&album_name=Fixtures&duration=32'
     )
-    expect(s.headers[0]?.['User-Agent']).toBe('Wordlit/test')
+    expect(s.headers[0]?.['User-Agent']).toBe('theaestheticslyrics/test')
   })
 
   it('falls back to search when get returns 404', async () => {
@@ -54,7 +54,7 @@ describe('LrclibClient.find', () => {
     ])
     const result = await client(s.fetch).find(query)
     expect(result).toEqual({ status: 'found', record: expect.objectContaining({ id: 2 }) })
-    expect(s.urls[1]).toContain('/api/search?track_name=Paper+Lanterns&artist_name=Wordlit+Test+Band')
+    expect(s.urls[1]).toContain('/api/search?track_name=Paper+Lanterns&artist_name=Lantern+Test+Band')
   })
 
   it('tries a cleaned free-text search last', async () => {
@@ -63,9 +63,9 @@ describe('LrclibClient.find', () => {
       { status: 200, body: [] },
       { status: 200, body: [rec({ id: 9 })] }
     ])
-    const result = await client(s.fetch).find({ ...query, title: 'Paper Lanterns (feat. Guest)', artist: 'Wordlit Test Band, Guest' })
+    const result = await client(s.fetch).find({ ...query, title: 'Paper Lanterns (feat. Guest)', artist: 'Lantern Test Band, Guest' })
     expect(result.status).toBe('found')
-    expect(s.urls[2]).toContain('/api/search?q=Paper+Lanterns+Wordlit+Test+Band')
+    expect(s.urls[2]).toContain('/api/search?q=Paper+Lanterns+Lantern+Test+Band')
   })
 
   it('retries a busy server with backoff', async () => {

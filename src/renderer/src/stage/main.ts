@@ -8,7 +8,7 @@ import { buildModel, msUntilNextWord, type LyricsModel } from './model'
 import { createStyle } from './styles/registry'
 import type { StageStyle } from './styles/types'
 
-const api = window.wordlit.stage
+const api = window.lyricsApp.stage
 const root = document.getElementById('stage')!
 const clock = new SongClock()
 const lockClock = new LockClock(document.body)
