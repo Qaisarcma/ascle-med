@@ -7,6 +7,10 @@ import { cleanTitle, normalizeForMatch, primaryArtist } from './normalize'
 export interface CacheEntry {
   status: 'found' | 'not-found' | 'instrumental'
   record?: LrclibRecord
+  /** NetEase word-timed lyrics (YRC) for this song, when it has them. */
+  yrc?: string
+  /** NetEase has answered for this song (entries without it get checked once). */
+  wordChecked?: boolean
   fetchedAt: number
 }
 

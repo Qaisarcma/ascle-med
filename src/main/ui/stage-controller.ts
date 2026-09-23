@@ -12,8 +12,14 @@ type Kind = 'lock' | 'overlay'
 interface StageWindow {
   kind: Kind
   win: BrowserWindow
-  ready: Promise<void>
+  /** Resolves true once the page has loaded, false if loading failed. */
+  ready: Promise<boolean>
 }
+
+/** A lyrics page that has not loaded after this long is rebuilt (loads normally take ~200 ms). */
+const LOAD_TIMEOUT_MS = 3000
+
+const delay = (ms: number): Promise<false> => new Promise((resolve) => setTimeout(() => resolve(false), ms))
 
 export interface StageContent {
   track: TrackInfo | null
@@ -92,8 +98,29 @@ export class StageController {
     this.evaluateOverlay()
   }
 
-  async openLock(reason: LockReason): Promise<void> {
-    const lockOnReturn = this.deps.settings().lockOnReturn
+  /** Loads the lyrics screen in the background so Ctrl+Alt+L only has to reveal it. */
+  prewarm(): void {
+    void this.readyLockWindow().then((sw) => this.deps.log(sw ? 'stage: lyrics screen ready' : 'stage: could not prepare the lyrics screen'))
+  }
+
+  /**
+   * Shows the lyrics screen as a viewer (Esc closes, never locks Windows) — used when Wordlit
+   * is opened from its desktop icon. Unlike the hotkey, it never toggles an open screen closed.
+   */
+  async showLyrics(): Promise<void> {
+    if (this.session) {
+      const win = this.lockWin?.win
+      if (win && !win.isDestroyed()) {
+        win.moveTop()
+        win.focus()
+      }
+      return
+    }
+    await this.openLock('hotkey', { viewer: true })
+  }
+
+  async openLock(reason: LockReason, opts: { viewer?: boolean } = {}): Promise<void> {
+    const lockOnReturn = opts.viewer ? false : this.deps.settings().lockOnReturn
     const open = this.session
     if (open) {
       if (reason !== 'hotkey') return
@@ -111,21 +138,45 @@ export class StageController {
     }
     const session = new LockSession(reason, Date.now(), lockOnReturn)
     this.session = session
-    const sw = this.ensure('lock')
-    await sw.ready
-    if (this.session !== session || sw.win.isDestroyed()) return
-    this.place(sw.win)
-    this.sendState(sw)
-    if (this.anchor) sw.win.webContents.send(IPC.stageAnchor, this.anchor)
-    sw.win.setAlwaysOnTop(true, 'screen-saver')
-    sw.win.show()
-    sw.win.moveTop()
-    sw.win.focus()
-    session.markShown(Date.now())
-    this.sendSessionInfo(session)
-    this.overlayWin?.win.hide()
-    this.deps.log(`stage: lock screen opened (${reason}${session.locksOnClose ? ', locks on return' : session.closesOnAnyInput ? '' : ', Esc closes'})`)
+    const requestedAt = Date.now()
+    const sw = await this.readyLockWindow()
+    if (this.session !== session) return
+    if (!sw) {
+      this.session = null
+      this.deps.log('stage: lyrics screen could not be shown')
+      return
+    }
+    try {
+      this.place(sw.win)
+      this.sendState(sw)
+      if (this.anchor) sw.win.webContents.send(IPC.stageAnchor, this.anchor)
+      sw.win.setAlwaysOnTop(true, 'screen-saver')
+      sw.win.show()
+      sw.win.moveTop()
+      sw.win.focus()
+      session.markShown(Date.now())
+      this.sendSessionInfo(session)
+      this.overlayWin?.win.hide()
+    } catch (err) {
+      this.session = null
+      this.deps.log(`stage: failed to show the lyrics screen (${String(err)})`)
+      return
+    }
+    const how = session.locksOnClose ? ', locks on return' : session.closesOnAnyInput ? '' : ', Esc closes'
+    this.deps.log(`stage: lock screen opened (${reason}${how}) in ${Date.now() - requestedAt} ms`)
     this.deps.onLockChange?.(true)
+  }
+
+  /** The loaded lock window, rebuilding it once if its page is stuck or failed to load. */
+  private async readyLockWindow(): Promise<StageWindow | null> {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      const sw = this.ensure('lock')
+      const loaded = await Promise.race([sw.ready, delay(LOAD_TIMEOUT_MS)])
+      if (loaded && !sw.win.isDestroyed()) return sw
+      this.deps.log(`stage: lyrics screen did not load (attempt ${attempt}), rebuilding it`)
+      this.destroy(sw)
+    }
+    return null
   }
 
   closeLock(fromInput: boolean, why: string): void {
@@ -227,9 +278,9 @@ export class StageController {
     if (this.overlayPending) return
     this.overlayPending = true
     const sw = this.ensure('overlay')
-    void sw.ready.then(() => {
+    void sw.ready.then((loaded) => {
       this.overlayPending = false
-      if (sw.win.isDestroyed() || this.session) return
+      if (!loaded || sw.win.isDestroyed() || this.session) return
       this.place(sw.win)
       this.sendState(sw)
       if (this.anchor) sw.win.webContents.send(IPC.stageAnchor, this.anchor)
@@ -256,6 +307,12 @@ export class StageController {
       fullscreenable: false,
       skipTaskbar: true,
       hasShadow: false,
+      // Windows 11 rounds frameless windows and draws a thin border by default, which let the
+      // desktop show through the corners of the lyrics screen. A screen-sized stage needs neither,
+      // nor the invisible resize frame that made the window wider than the screen.
+      roundedCorners: false,
+      accentColor: false,
+      thickFrame: false,
       alwaysOnTop: true,
       focusable: kind === 'lock',
       transparent: kind === 'overlay',
@@ -278,15 +335,32 @@ export class StageController {
       this.destroy(sw)
     })
 
+    // Load timing, to diagnose a lyrics screen that is slow to appear.
+    const createdAt = Date.now()
+    const since = (): string => `${Date.now() - createdAt} ms`
+    this.deps.log(`stage: creating ${kind} window`)
+    win.webContents.once('dom-ready', () => this.deps.log(`stage: ${kind} window dom-ready after ${since()}`))
+    win.webContents.on('did-fail-load', (_e, code, description) =>
+      this.deps.log(`stage: ${kind} window failed to load after ${since()} (${code} ${description})`)
+    )
+    win.webContents.on('unresponsive', () => this.deps.log(`stage: ${kind} window unresponsive after ${since()}`))
+    win.webContents.on('responsive', () => this.deps.log(`stage: ${kind} window responsive again after ${since()}`))
+
     const sw: StageWindow = {
       kind,
       win,
       ready: loadPage(win, 'stage').then(
         () => {
+          this.deps.log(`stage: ${kind} window loaded after ${since()}`)
+          if (win.isDestroyed()) return false
           this.sendState(sw)
           if (this.anchor) win.webContents.send(IPC.stageAnchor, this.anchor)
+          return true
         },
-        (err: unknown) => this.deps.log(`stage: failed to load (${String(err)})`)
+        (err: unknown) => {
+          this.deps.log(`stage: ${kind} window failed to load after ${since()} (${String(err)})`)
+          return false
+        }
       )
     }
     if (kind === 'lock') this.lockWin = sw

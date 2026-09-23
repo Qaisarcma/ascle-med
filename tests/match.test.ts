@@ -42,6 +42,20 @@ describe('scoreCandidate', () => {
     expect(scoreCandidate(query, record({ duration: 60 }))).toBe(Number.NEGATIVE_INFINITY)
   })
 
+  it('uses the album to confirm a match when the player gives no artist', () => {
+    const noArtist = { ...query, artist: '' }
+    const sameAlbum = scoreCandidate(noArtist, record({ albumName: 'Fixtures' }))
+    const otherAlbum = scoreCandidate(noArtist, record({ albumName: 'Something Else' }))
+    expect(sameAlbum).toBeGreaterThan(0.95)
+    expect(sameAlbum).toBeGreaterThan(otherAlbum)
+  })
+
+  it('can still match on title and length alone', () => {
+    const bare = { ...query, artist: '', album: '' }
+    expect(pickBest(bare, [record({ id: 4 })])?.id).toBe(4)
+    expect(pickBest(bare, [record({ id: 4, duration: 50 })])).toBeNull()
+  })
+
   it('tolerates featuring credits and casing', () => {
     const q = { ...query, title: 'paper lanterns (feat. Guest)', artist: 'Wordlit Test Band, Guest' }
     expect(scoreCandidate(q, record({}))).toBeGreaterThan(0.8)

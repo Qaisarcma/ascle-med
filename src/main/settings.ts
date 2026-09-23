@@ -27,6 +27,8 @@ export interface Settings {
    * Off: the lyrics screen stays up until Esc (or Ctrl+Alt+L again) and nothing is locked.
    */
   lockOnReturn: boolean
+  /** Also ask NetEase (unofficial) for real per-word timing; LRCLIB stays the fallback. */
+  wordLevel: boolean
 }
 
 export const IDLE_CHOICES: readonly IdleMinutes[] = [0, 1, 2, 5]
@@ -44,7 +46,8 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   allPlayers: false,
   launchAtLogin: false,
   welcomed: false,
-  lockOnReturn: false
+  lockOnReturn: false,
+  wordLevel: true
 }) as Readonly<Settings>
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
@@ -76,7 +79,8 @@ export function sanitizeSettings(raw: unknown): Settings {
     allPlayers: typeof r.allPlayers === 'boolean' ? r.allPlayers : DEFAULT_SETTINGS.allPlayers,
     launchAtLogin: typeof r.launchAtLogin === 'boolean' ? r.launchAtLogin : DEFAULT_SETTINGS.launchAtLogin,
     welcomed: typeof r.welcomed === 'boolean' ? r.welcomed : DEFAULT_SETTINGS.welcomed,
-    lockOnReturn: typeof r.lockOnReturn === 'boolean' ? r.lockOnReturn : DEFAULT_SETTINGS.lockOnReturn
+    lockOnReturn: typeof r.lockOnReturn === 'boolean' ? r.lockOnReturn : DEFAULT_SETTINGS.lockOnReturn,
+    wordLevel: typeof r.wordLevel === 'boolean' ? r.wordLevel : DEFAULT_SETTINGS.wordLevel
   }
 }
 

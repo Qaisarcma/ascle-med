@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { activeLineIndex, activeWordIndex, buildModel } from '../src/renderer/src/stage/model'
+import { activeLineIndex, activeWordIndex, buildModel, msUntilNextWord } from '../src/renderer/src/stage/model'
 import type { TimedLyrics } from '../src/shared/types'
 
 const lyrics: TimedLyrics = {
@@ -50,6 +50,19 @@ describe('activeWordIndex', () => {
   })
   it('handles an empty model', () => {
     expect(activeWordIndex(buildModel({ lines: [], wordTiming: 'estimated' }), 5)).toBe(-1)
+  })
+})
+
+describe('msUntilNextWord', () => {
+  const model = buildModel(lyrics)
+  it('counts down to the next word start', () => {
+    expect(msUntilNextWord(model, 400)).toBe(600)
+    expect(msUntilNextWord(model, 1200)).toBe(300)
+    expect(msUntilNextWord(model, 2000)).toBe(3000)
+  })
+  it('is infinite after the last word and without lyrics', () => {
+    expect(msUntilNextWord(model, 5500)).toBe(Number.POSITIVE_INFINITY)
+    expect(msUntilNextWord(buildModel({ lines: [], wordTiming: 'estimated' }), 0)).toBe(Number.POSITIVE_INFINITY)
   })
 })
 

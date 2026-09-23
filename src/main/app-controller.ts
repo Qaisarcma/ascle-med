@@ -7,6 +7,7 @@ import type { Log } from './logger'
 import { LyricsCache } from './lyrics/cache'
 import { LocalLyrics } from './lyrics/local'
 import { LrclibClient } from './lyrics/lrclib'
+import { NeteaseClient } from './lyrics/netease'
 import { LyricsService, type LyricsResult } from './lyrics/service'
 import { MediaWatcher, type ArtworkEvent } from './media/watcher'
 import { extractPalette, paletteFromColors } from './palette/extract'
@@ -21,6 +22,11 @@ export const HOTKEY = 'CommandOrControl+Alt+L'
 /** Players publish title/artist/album in steps; wait for them to settle before looking up lyrics. */
 const TRACK_SETTLE_MS = 350
 const ERROR_RETRY_MS = 2 * 60 * 1000
+
+export interface LaunchOptions {
+  /** Opened by the user (desktop icon, Start menu): show the lyrics right away. */
+  showLyricsOnLaunch?: boolean
+}
 
 export interface DebugOptions {
   captureAfterMs?: number
@@ -50,12 +56,14 @@ export class AppController {
   private hotkeyOk = false
   private lookupToken = 0
   private loginItemApplied: boolean | null = null
+  private lastWordLevel = true
   private readonly timers = new Set<NodeJS.Timeout>()
 
   constructor(
     private readonly paths: AppPaths,
     private readonly log: Log,
-    private readonly debug: DebugOptions = {}
+    private readonly debug: DebugOptions = {},
+    private readonly launch: LaunchOptions = {}
   ) {}
 
   async start(): Promise<void> {
@@ -66,8 +74,10 @@ export class AppController {
       local: this.local,
       cache: new LyricsCache(this.paths.cacheDir),
       client: new LrclibClient({ userAgent: `Wordlit/${app.getVersion()} (Windows lyrics overlay)` }),
-      log: this.log
+      log: this.log,
+      wordLevel: { client: new NeteaseClient(), enabled: () => this.settings.get().wordLevel }
     })
+    this.lastWordLevel = this.settings.get().wordLevel
     this.power = new PowerKeeper(this.log)
     this.stage = new StageController({
       log: this.log,
@@ -108,6 +118,11 @@ export class AppController {
     this.refresh()
     this.log(`app: started ${app.getVersion()} (data: ${this.paths.userData})`)
 
+    // Opened from the desktop icon: show the lyrics now (they fill in as soon as they are found).
+    // Otherwise, load the lyrics screen in the background so Ctrl+Alt+L opens it instantly.
+    if (this.launch.showLyricsOnLaunch) void this.stage.showLyrics()
+    else this.stage.prewarm()
+
     if (!this.settings.get().welcomed) {
       this.tray.balloon(
         'Wordlit is running',
@@ -131,8 +146,9 @@ export class AppController {
     this.tray?.destroy()
   }
 
-  showMenu(): void {
-    this.tray?.popUp()
+  /** Wordlit was opened again (e.g. its desktop icon) while already running: show the lyrics. */
+  showLyrics(): void {
+    void this.stage?.showLyrics()
   }
 
   private later(ms: number, fn: () => void): void {
@@ -213,6 +229,14 @@ export class AppController {
     this.applyLoginItem(s)
     this.watcher.refreshPolicy()
     this.stage.settingsChanged()
+    if (s.wordLevel !== this.lastWordLevel) {
+      this.lastWordLevel = s.wordLevel
+      // Switching the word-timing source re-fetches the current song's lyrics.
+      if (this.track?.title) {
+        this.status = 'searching'
+        void this.lookup(this.track, ++this.lookupToken)
+      }
+    }
     this.refresh()
   }
 
@@ -259,7 +283,8 @@ export class AppController {
 
   private applyLoginItem(s: Settings): void {
     if (!app.isPackaged || this.loginItemApplied === s.launchAtLogin) return
-    app.setLoginItemSettings({ openAtLogin: s.launchAtLogin, path: process.execPath })
+    // --autostart: starting with Windows stays quietly in the tray instead of opening the lyrics.
+    app.setLoginItemSettings({ openAtLogin: s.launchAtLogin, path: process.execPath, args: ['--autostart'] })
     this.loginItemApplied = s.launchAtLogin
     this.log(`app: start with Windows ${s.launchAtLogin ? 'on' : 'off'}`)
   }
@@ -275,6 +300,7 @@ export class AppController {
       showNow: () => void this.stage.openLock('hotkey'),
       setLockOnReturn: (lockOnReturn) => this.settings.update({ lockOnReturn }),
       setOffset: (offsetMs) => this.settings.update({ offsetMs }),
+      setWordLevel: (wordLevel) => this.settings.update({ wordLevel }),
       setIdle: (idleMinutes) => this.settings.update({ idleMinutes }),
       setAllPlayers: (allPlayers) => this.settings.update({ allPlayers }),
       openLyricsFolder: () => {

@@ -41,10 +41,11 @@ Then:
 
 ## Lyrics and timing
 
-- **Where lyrics come from:** [LRCLIB](https://lrclib.net), a free and open lyrics database. No account or API key is needed.
-  - Results are cached in `%APPDATA%\wordlit\lyrics-cache`.
-  - "Not found" answers are re-checked after 3 days.
-- **How the timing works:** LRCLIB gives exact **line** timing. Wordlit estimates when each **word** is sung inside a line, from syllables and punctuation, adapted to the song's pace. Every line re-syncs to the real time, so small errors never build up.
+- **Where lyrics come from:** two sources, asked at the same time. Neither needs an account or API key.
+  - **NetEase Cloud Music** (unofficial) has **real per-word timing** for many songs. When it has the song, every word lights exactly when it's sung. Turn it off with tray → *Precise Word Timing (NetEase)*.
+  - **[LRCLIB](https://lrclib.net)**, a free and open lyrics database, covers everything else. It gives exact **line** timing, and Wordlit estimates each word inside a line from syllables and punctuation, adapted to the song's pace. Every line re-syncs to the real time, so small errors never build up.
+  - Results are cached in `%APPDATA%\wordlit\lyrics-cache`; songs you've played before load instantly. "Not found" answers are re-checked after 3 days.
+  - Only the song's title, artist, album and length are sent, to lrclib.net and music.163.com.
 - **Your own lyrics:** put `.lrc` files in **Documents\Wordlit\Lyrics** (tray → *Open Lyrics Folder*), named `Artist - Title.lrc`.
   - Word-level ("enhanced") LRC with `<mm:ss.xx>` word tags is used exactly as written.
   - Your files always win over the online database.

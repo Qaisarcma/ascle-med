@@ -50,20 +50,30 @@ function startApp(): void {
   app.setAppUserModelId('Wordlit')
 
   let controller: AppController | null = null
-  app.on('second-instance', () => controller?.showMenu())
+  // The desktop icon again while Wordlit runs: show the lyrics instead of starting a second copy.
+  app.on('second-instance', () => controller?.showLyrics())
   // Wordlit lives in the tray; closing its windows must not quit it.
   app.on('window-all-closed', () => undefined)
   app.on('will-quit', () => controller?.stop())
 
+  // A plain launch of the packaged app (desktop icon, Start menu) has no arguments; starting with
+  // Windows passes --autostart, and development/test runs pass their own flags.
+  const openedByUser = app.isPackaged && process.argv.length === 1
+
   void app.whenReady().then(async () => {
-    controller = new AppController(paths, log, {
-      captureAfterMs: argNumber('capture-after'),
-      captureFile: argValue('capture-file'),
-      openLockAfterMs: argNumber('open-lock-after'),
-      returnAfterMs: argNumber('return-after'),
-      colorsCaptureFile: argValue('capture-colors'),
-      quitAfterMs: argNumber('quit-after')
-    })
+    controller = new AppController(
+      paths,
+      log,
+      {
+        captureAfterMs: argNumber('capture-after'),
+        captureFile: argValue('capture-file'),
+        openLockAfterMs: argNumber('open-lock-after'),
+        returnAfterMs: argNumber('return-after'),
+        colorsCaptureFile: argValue('capture-colors'),
+        quitAfterMs: argNumber('quit-after')
+      },
+      { showLyricsOnLaunch: openedByUser }
+    )
     try {
       await controller.start()
     } catch (err) {

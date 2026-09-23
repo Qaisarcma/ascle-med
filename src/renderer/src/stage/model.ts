@@ -45,3 +45,9 @@ function lastStartedBefore(items: { start: number }[], t: number): number {
 export const activeWordIndex = (model: LyricsModel, t: number): number => lastStartedBefore(model.words, t)
 
 export const activeLineIndex = (model: LyricsModel, t: number): number => lastStartedBefore(model.lines, t)
+
+/** Milliseconds until the next word starts (Infinity when no word follows), so frames can land on time. */
+export function msUntilNextWord(model: LyricsModel, t: number): number {
+  const next = model.words[activeWordIndex(model, t) + 1]
+  return next ? next.start - t : Number.POSITIVE_INFINITY
+}

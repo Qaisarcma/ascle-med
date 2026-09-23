@@ -4,7 +4,7 @@ import type { StageState } from '@shared/ipc'
 import type { Palette, ShowOn, StyleId } from '@shared/types'
 import { SongClock } from './clock'
 import { LockClock } from './lock-clock'
-import { buildModel, type LyricsModel } from './model'
+import { buildModel, msUntilNextWord, type LyricsModel } from './model'
 import { createStyle } from './styles/registry'
 import type { StageStyle } from './styles/types'
 
@@ -98,15 +98,18 @@ function loop(): void {
     return
   }
   const started = performance.now()
-  const busy = render(clock.now(started, Date.now()), started)
+  const songMs = clock.now(started, Date.now())
+  const busy = render(songMs, started)
   const fps = FRAME_RATE[mode][busy ? 'busy' : 'idle']
   if (fps >= 60) {
     requestAnimationFrame(loop)
     return
   }
-  // Wait out most of the frame budget, then align the next frame to vsync.
-  const wait = Math.max(0, 1000 / fps - (performance.now() - started) - 8)
-  setTimeout(() => requestAnimationFrame(loop), wait)
+  // Wait out most of the frame budget, then align the next frame to vsync — but never
+  // sleep through the start of the next word, or it would light up a frame late.
+  let wait = 1000 / fps - (performance.now() - started) - 8
+  if (model && clock.playing) wait = Math.min(wait, msUntilNextWord(model, songMs) - 12)
+  setTimeout(() => requestAnimationFrame(loop), Math.max(0, wait))
 }
 
 function startLoop(): void {

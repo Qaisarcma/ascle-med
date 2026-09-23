@@ -24,6 +24,7 @@ export interface TrayActions {
   showNow(): void
   setLockOnReturn(on: boolean): void
   setOffset(ms: number): void
+  setWordLevel(on: boolean): void
   setIdle(minutes: IdleMinutes): void
   setAllPlayers(on: boolean): void
   openLyricsFolder(): void
@@ -178,6 +179,12 @@ export class TrayMenu {
       { label: 'Reset Colors', click: () => a.resetColors() },
       { type: 'separator' },
       { label: 'Timing', submenu: OFFSETS.map((o) => radio(o.label, s.offsetMs === o.ms, () => a.setOffset(o.ms))) },
+      {
+        label: 'Precise Word Timing (NetEase)',
+        type: 'checkbox',
+        checked: s.wordLevel,
+        click: (item) => a.setWordLevel(item.checked)
+      },
       {
         label: 'Lyrics Screen When Idle',
         submenu: IDLE.map((o) => radio(o.label, s.idleMinutes === o.minutes, () => a.setIdle(o.minutes)))

@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { LyricsCache, cacheKey } from '../src/main/lyrics/cache'
 import { LocalLyrics } from '../src/main/lyrics/local'
 import type { FindResult, LrclibClient } from '../src/main/lyrics/lrclib'
+import type { NeteaseClient, NeteaseResult } from '../src/main/lyrics/netease'
 import type { LrclibRecord, TrackQuery } from '../src/main/lyrics/match'
 import { LyricsService, recordToTimedLyrics } from '../src/main/lyrics/service'
 
@@ -26,14 +27,35 @@ const record = (over: Partial<LrclibRecord> = {}): LrclibRecord => ({
   ...over
 })
 
-function setup(find: () => Promise<FindResult>) {
+// Original test text written for Wordlit (not a real song), in NetEase's word-timed format.
+const YRC = [
+  '[1000,3200](1000,400,0)Paper (1400,600,0)lanterns (2000,500,0)drifting',
+  '[4200,1500](4200,300,0)Every (4500,300,0)window (4800,500,0)keeps',
+  '[8000,1200](8000,600,0)Hold (8600,600,0)the (9200,600,0)light'
+].join('\n')
+
+function setup(find: () => Promise<FindResult>, word?: { find: () => Promise<NeteaseResult>; enabled?: boolean }) {
   const base = mkdtempSync(join(tmpdir(), 'wordlit-service-'))
   const local = new LocalLyrics(join(base, 'local'))
   const cache = new LyricsCache(join(base, 'cache'))
   const client = { find: vi.fn(find) } as unknown as LrclibClient & { find: ReturnType<typeof vi.fn> }
-  const service = new LyricsService({ local, cache, client, log: () => {} })
-  return { base, local, cache, client, service }
+  const wordClient = { find: vi.fn(word?.find ?? (async (): Promise<NeteaseResult> => ({ status: 'not-found' }))) }
+  const state = { enabled: word?.enabled ?? true }
+  const service = new LyricsService({
+    local,
+    cache,
+    client,
+    log: () => {},
+    wordLevel: word ? { client: wordClient as unknown as NeteaseClient, enabled: () => state.enabled } : undefined
+  })
+  return { base, local, cache, client, wordClient, state, service }
 }
+
+const neteaseFound = async (): Promise<NeteaseResult> => ({
+  status: 'found',
+  yrc: YRC,
+  song: { id: 1, title: 'Paper Lanterns', artist: 'Wordlit Test Band', album: 'Fixtures', durationSec: 32 }
+})
 
 describe('recordToTimedLyrics', () => {
   it('prefers the lyricsfile, then synced lyrics', () => {
@@ -87,6 +109,57 @@ describe('LyricsService.get', () => {
     expect(await s.cache.get(cacheKey(query))).toBeNull()
     await s.service.get(query)
     expect(s.client.find).toHaveBeenCalledTimes(2)
+  })
+
+  it('uses real word timing from NetEase when it has the song', async () => {
+    const s = setup(async () => ({ status: 'found', record: record() }), { find: neteaseFound })
+    const result = await s.service.get(query)
+    expect(result).toMatchObject({ status: 'found', source: 'netease' })
+    expect(result.lyrics?.wordTiming).toBe('native')
+    expect(result.lyrics?.lines[0]?.words[1]).toEqual({ text: 'lanterns', start: 1400, end: 2000 })
+  })
+
+  it('falls back to LRCLIB when NetEase has no word timing', async () => {
+    const s = setup(async () => ({ status: 'found', record: record() }), { find: async () => ({ status: 'not-found' }) })
+    const result = await s.service.get(query)
+    expect(result).toMatchObject({ status: 'found', source: 'lrclib' })
+    expect(result.lyrics?.wordTiming).toBe('estimated')
+  })
+
+  it('falls back to LRCLIB when NetEase fails, and asks NetEase again next time', async () => {
+    const s = setup(async () => ({ status: 'found', record: record() }), {
+      find: async () => ({ status: 'error', message: 'down' })
+    })
+    expect((await s.service.get(query)).source).toBe('lrclib')
+    s.wordClient.find.mockImplementation(neteaseFound)
+    expect(await s.service.get(query)).toMatchObject({ status: 'found', source: 'netease' })
+    expect(s.client.find).toHaveBeenCalledTimes(1)
+  })
+
+  it('upgrades a song cached before word timing existed, only once', async () => {
+    const s = setup(async () => ({ status: 'found', record: record() }), { find: neteaseFound })
+    await s.cache.set(cacheKey(query), { status: 'found', record: record(), fetchedAt: Date.now() })
+    expect(await s.service.get(query)).toMatchObject({ source: 'netease' })
+    expect(await s.service.get(query)).toMatchObject({ source: 'cache' })
+    expect((await s.service.get(query)).lyrics?.wordTiming).toBe('native')
+    expect(s.wordClient.find).toHaveBeenCalledTimes(1)
+    expect(s.client.find).not.toHaveBeenCalled()
+  })
+
+  it('finds lyrics only NetEase has', async () => {
+    const s = setup(async () => ({ status: 'not-found' }), { find: neteaseFound })
+    expect(await s.service.get(query)).toMatchObject({ status: 'found', source: 'netease' })
+  })
+
+  it('never contacts NetEase or uses its cached timing when turned off', async () => {
+    const s = setup(async () => ({ status: 'found', record: record() }), { find: neteaseFound, enabled: false })
+    expect((await s.service.get(query)).source).toBe('lrclib')
+    expect(s.wordClient.find).not.toHaveBeenCalled()
+    s.state.enabled = true
+    expect(await s.service.get(query)).toMatchObject({ source: 'netease' })
+    s.state.enabled = false
+    const off = await s.service.get(query)
+    expect(off.lyrics?.wordTiming).toBe('estimated')
   })
 
   it('treats a found record without usable timing as not-found', async () => {

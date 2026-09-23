@@ -8,6 +8,7 @@ import { LyricsCache } from '../src/main/lyrics/cache'
 import { LocalLyrics } from '../src/main/lyrics/local'
 import { LrclibClient } from '../src/main/lyrics/lrclib'
 import type { TrackQuery } from '../src/main/lyrics/match'
+import { NeteaseClient } from '../src/main/lyrics/netease'
 import { LyricsService } from '../src/main/lyrics/service'
 
 const base = mkdtempSync(join(tmpdir(), 'wordlit-live-'))
@@ -39,6 +40,27 @@ describe('lrclib.net (live)', () => {
       }
     }, 60_000)
   }
+
+  it('finds a song Spotify published without its artist (regression: HTTP 400)', async () => {
+    const result = await service.get({ title: 'Call Out My Name', artist: '', album: 'My Dear Melancholy,', durationMs: 228_373 })
+    console.log(`no-artist lookup: ${result.status}${result.lyrics ? `, ${result.lyrics.lines.length} lines` : ''}`)
+    expect(result.status).toBe('found')
+  }, 60_000)
+
+  it('gets real word timing from NetEase for a popular song', async () => {
+    const withWords = new LyricsService({
+      local: new LocalLyrics(join(base, 'none')),
+      cache: new LyricsCache(join(base, 'cache-words')),
+      client: new LrclibClient({ userAgent: 'Wordlit/0.1.0 (Windows lyrics overlay; live check)' }),
+      log: () => {},
+      wordLevel: { client: new NeteaseClient(), enabled: () => true }
+    })
+    const result = await withWords.get(popular[0]!)
+    console.log(`word-level: ${result.status} via ${result.source}, ${result.lyrics?.lines.length ?? 0} lines, ${result.lyrics?.wordTiming}`)
+    expect(result.status).toBe('found')
+    expect(result.source).toBe('netease')
+    expect(result.lyrics?.wordTiming).toBe('native')
+  }, 60_000)
 
   it('reports a clearly unknown song as not-found', async () => {
     const result = await service.get({ title: 'Zzqx Wordlit Nonexistent Song', artist: 'Nobody Qqz', album: '', durationMs: 123_000 })

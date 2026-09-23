@@ -13,6 +13,12 @@ describe('sanitizeSettings', () => {
     expect(sanitizeSettings('nope')).toEqual(DEFAULT_SETTINGS)
   })
 
+  it('uses precise word timing by default and can turn it off', () => {
+    expect(DEFAULT_SETTINGS.wordLevel).toBe(true)
+    expect(sanitizeSettings({ wordLevel: false }).wordLevel).toBe(false)
+    expect(sanitizeSettings({ wordLevel: 1 }).wordLevel).toBe(true)
+  })
+
   it('does not lock Windows from the lyrics screen unless asked to', () => {
     expect(DEFAULT_SETTINGS.lockOnReturn).toBe(false)
     expect(sanitizeSettings({ lockOnReturn: 'yes' }).lockOnReturn).toBe(false)

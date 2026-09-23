@@ -20,7 +20,13 @@ export interface LrclibOptions {
   baseUrl?: string
 }
 
-type Reply = { kind: 'ok'; body: unknown } | { kind: 'missing' } | { kind: 'error'; message: string }
+type Reply =
+  | { kind: 'ok'; body: unknown }
+  | { kind: 'missing' }
+  /** The server refused this particular request (4xx); other lookups may still work. */
+  | { kind: 'rejected'; message: string }
+  /** The server is busy or unreachable (after retries); stop and try again later. */
+  | { kind: 'error'; message: string }
 
 const BACKOFF_MS = [1000, 2500, 5000]
 
@@ -71,29 +77,44 @@ export class LrclibClient {
   }
 
   async find(q: TrackQuery): Promise<FindResult> {
-    const exact = new URLSearchParams({ track_name: q.title, artist_name: q.artist })
-    if (q.album) exact.set('album_name', q.album)
-    if (q.durationMs > 0) exact.set('duration', String(Math.round(q.durationMs / 1000)))
+    // Players sometimes publish a track before (or without) its artist, and LRCLIB rejects an
+    // empty artist_name. Without one, search by title and let the scorer confirm by album and length.
+    const hasArtist = q.artist.trim() !== ''
+    let rejected: string | null = null
 
-    const got = await this.request(`/api/get?${exact}`)
-    if (got.kind === 'error') return { status: 'error', message: got.message }
-    if (got.kind === 'ok') {
-      const record = toRecord(got.body)
-      if (record && scoreCandidate(q, record) >= MIN_SCORE) return { status: 'found', record }
+    if (hasArtist) {
+      const exact = new URLSearchParams({ track_name: q.title, artist_name: q.artist })
+      if (q.album) exact.set('album_name', q.album)
+      if (q.durationMs > 0) exact.set('duration', String(Math.round(q.durationMs / 1000)))
+
+      const got = await this.request(`/api/get?${exact}`)
+      if (got.kind === 'error') return { status: 'error', message: got.message }
+      if (got.kind === 'rejected') rejected = got.message
+      if (got.kind === 'ok') {
+        const record = toRecord(got.body)
+        if (record && scoreCandidate(q, record) >= MIN_SCORE) return { status: 'found', record }
+      }
     }
 
-    const searches = [
-      new URLSearchParams({ track_name: q.title, artist_name: q.artist }),
-      new URLSearchParams({ q: `${cleanTitle(q.title)} ${primaryArtist(q.artist)}` })
-    ]
+    const searches = hasArtist
+      ? [
+          new URLSearchParams({ track_name: q.title, artist_name: q.artist }),
+          new URLSearchParams({ q: `${cleanTitle(q.title)} ${primaryArtist(q.artist)}` })
+        ]
+      : [new URLSearchParams({ track_name: q.title }), new URLSearchParams({ q: cleanTitle(q.title) })]
     for (const params of searches) {
       const reply = await this.request(`/api/search?${params}`)
       if (reply.kind === 'error') return { status: 'error', message: reply.message }
+      if (reply.kind === 'rejected') {
+        rejected = reply.message
+        continue
+      }
       if (reply.kind !== 'ok') continue
       const best = pickBest(q, toRecords(reply.body))
       if (best) return { status: 'found', record: best }
     }
-    return { status: 'not-found' }
+    // A refused request is not proof the song has no lyrics: report an error so it is not cached.
+    return rejected ? { status: 'error', message: rejected } : { status: 'not-found' }
   }
 
   private async request(path: string): Promise<Reply> {
@@ -106,7 +127,7 @@ export class LrclibClient {
         if (res.status === 404) return { kind: 'missing' }
         if (res.ok) return { kind: 'ok', body: await res.json().catch(() => null) }
         if (res.status === 429 || res.status >= 500) throw new Retryable(`HTTP ${res.status}`)
-        return { kind: 'error', message: `HTTP ${res.status}` }
+        return { kind: 'rejected', message: `HTTP ${res.status}` }
       } catch (err) {
         if (attempt >= this.retries) {
           return { kind: 'error', message: err instanceof Error ? err.message : String(err) }

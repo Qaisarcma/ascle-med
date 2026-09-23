@@ -107,6 +107,28 @@ describe('LrclibClient.find', () => {
     expect(result.status === 'found' && result.record.id).toBe(2)
   })
 
+  it('searches by title when the player gives no artist (regression: HTTP 400)', async () => {
+    const s = scripted([{ status: 200, body: [rec({ id: 5 })] }])
+    const result = await client(s.fetch).find({ ...query, artist: '' })
+    expect(result.status === 'found' && result.record.id).toBe(5)
+    expect(s.urls[0]).toBe('https://lrclib.test/api/search?track_name=Paper+Lanterns')
+    expect(s.urls.some((u) => u.includes('artist_name=&') || u.endsWith('artist_name='))).toBe(false)
+  })
+
+  it('keeps searching when a lookup is rejected', async () => {
+    const s = scripted([
+      { status: 400, body: { message: 'artist_name: cannot be empty' } },
+      { status: 200, body: [rec({ id: 3 })] }
+    ])
+    const result = await client(s.fetch).find(query)
+    expect(result.status === 'found' && result.record.id).toBe(3)
+  })
+
+  it('reports an error, not "no lyrics", when every lookup is rejected', async () => {
+    const s = scripted([{ status: 400 }, { status: 400 }, { status: 400 }])
+    expect((await client(s.fetch).find(query)).status).toBe('error')
+  })
+
   it('ignores malformed bodies', async () => {
     const s = scripted([{ status: 200, body: 'garbage' }, { status: 200, body: { not: 'an array' } }, { status: 200, body: [] }])
     expect((await client(s.fetch).find(query)).status).toBe('not-found')

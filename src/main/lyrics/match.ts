@@ -54,23 +54,40 @@ const similarity = (a: string, b: string): number => Math.max(dice(words(a), wor
 export const hasTiming = (r: LrclibRecord): boolean =>
   !!r.syncedLyrics?.trim() || !!(r.lyricsfile && /start_ms\s*:/.test(r.lyricsfile))
 
-/** 0…1 confidence that `r` is the queried recording; -Infinity when it cannot be used. */
-export function scoreCandidate(q: TrackQuery, r: LrclibRecord): number {
-  if (!r.instrumental && !hasTiming(r)) return Number.NEGATIVE_INFINITY
+/** What any lyrics source knows about a recording. */
+export interface SongMeta {
+  title: string
+  artist: string
+  album: string | null
+  durationSec: number
+}
 
+/**
+ * 0…1 confidence that `m` is the queried recording; -Infinity when the lengths differ by more
+ * than `maxGapSec` (a different edit or live version would have different timing).
+ */
+export function scoreMatch(q: TrackQuery, m: SongMeta, maxGapSec = MAX_DURATION_GAP_S): number {
   let durationScore = 0.5
-  if (q.durationMs > 0 && r.duration > 0) {
-    const gap = Math.abs(q.durationMs / 1000 - r.duration)
-    if (gap > MAX_DURATION_GAP_S) return Number.NEGATIVE_INFINITY
+  if (q.durationMs > 0 && m.durationSec > 0) {
+    const gap = Math.abs(q.durationMs / 1000 - m.durationSec)
+    if (gap > maxGapSec) return Number.NEGATIVE_INFINITY
     durationScore = gap <= EXACT_DURATION_S ? 1 : 1 - (gap - EXACT_DURATION_S) / (MAX_DURATION_GAP_S - EXACT_DURATION_S)
   }
 
-  const title = Math.max(similarity(q.title, r.trackName), similarity(cleanTitle(q.title), cleanTitle(r.trackName)))
-  const artist = Math.max(
-    similarity(q.artist, r.artistName),
-    similarity(primaryArtist(q.artist), primaryArtist(r.artistName))
-  )
+  const title = Math.max(similarity(q.title, m.title), similarity(cleanTitle(q.title), cleanTitle(m.title)))
+  // Players sometimes publish a track without its artist; the album then confirms the match instead.
+  const artist = q.artist.trim()
+    ? Math.max(similarity(q.artist, m.artist), similarity(primaryArtist(q.artist), primaryArtist(m.artist)))
+    : q.album.trim() && m.album
+      ? similarity(q.album, m.album)
+      : 0
   return 0.45 * title + 0.3 * artist + 0.25 * durationScore
+}
+
+/** 0…1 confidence that `r` is the queried recording; -Infinity when it cannot be used. */
+export function scoreCandidate(q: TrackQuery, r: LrclibRecord): number {
+  if (!r.instrumental && !hasTiming(r)) return Number.NEGATIVE_INFINITY
+  return scoreMatch(q, { title: r.trackName, artist: r.artistName, album: r.albumName, durationSec: r.duration })
 }
 
 export function pickBest(q: TrackQuery, records: LrclibRecord[]): LrclibRecord | null {
