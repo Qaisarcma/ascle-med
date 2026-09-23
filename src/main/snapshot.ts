@@ -1,10 +1,11 @@
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { BrowserWindow, ipcMain } from 'electron'
 import { DEMO_LRC, DEMO_MOMENTS, DEMO_TRACK } from '@shared/demo-song'
 import { IPC, type StageState } from '@shared/ipc'
 import { DEFAULT_PALETTE } from '@shared/palette-defaults'
 import { STYLE_IDS, type Palette, type ShowOn, type StyleId } from '@shared/types'
+import { makeDirSync } from './dirs'
 import { parseLrc } from './lyrics/lrc'
 import { buildTimedLyrics } from './lyrics/word-timing'
 import { harden, loadPage, secureWebPreferences } from './ui/windows'
@@ -27,7 +28,7 @@ export async function runSnapshots(opts: SnapshotOptions): Promise<string[]> {
   const height = opts.height ?? 864
   const lyrics = buildTimedLyrics(parseLrc(DEMO_LRC), DEMO_TRACK.durationMs)
   if (!lyrics) throw new Error('demo lyrics failed to parse')
-  mkdirSync(opts.outDir, { recursive: true })
+  makeDirSync(opts.outDir)
 
   const win = new BrowserWindow({
     width,

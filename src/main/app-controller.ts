@@ -71,7 +71,8 @@ export class AppController {
   async start(): Promise<void> {
     this.settings = new SettingsStore(this.paths.settingsFile)
     this.local = new LocalLyrics(this.paths.lyricsDir)
-    await this.local.ensureDir().catch((err: unknown) => this.log(`lyrics: cannot create folder (${String(err)})`))
+    // Startup never waits on the folder: lookups simply find no files until it exists.
+    void this.local.ensureDir().catch((err: unknown) => this.log(`lyrics: cannot create folder (${String(err)})`))
     this.lyrics = new LyricsService({
       local: this.local,
       cache: new LyricsCache(this.paths.cacheDir),

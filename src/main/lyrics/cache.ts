@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
+import { readFile, rename, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { makeDir } from '../dirs'
 import type { LrclibRecord, TrackQuery } from './match'
 import { cleanTitle, normalizeForMatch, primaryArtist } from './normalize'
 
@@ -49,7 +50,7 @@ export class LyricsCache {
   }
 
   async set(key: string, entry: CacheEntry): Promise<void> {
-    await mkdir(this.dir, { recursive: true })
+    await makeDir(this.dir)
     const target = this.file(key)
     const tmp = `${target}.${process.pid}.tmp`
     await writeFile(tmp, JSON.stringify(entry), 'utf8')

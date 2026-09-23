@@ -1,5 +1,6 @@
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
+import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { makeDir } from '../dirs'
 import type { TrackQuery } from './match'
 import { cleanTitle, normalizeForMatch, primaryArtist } from './normalize'
 
@@ -29,7 +30,7 @@ export class LocalLyrics {
   constructor(readonly dir: string) {}
 
   async ensureDir(): Promise<void> {
-    await mkdir(this.dir, { recursive: true })
+    await makeDir(this.dir)
     try {
       await writeFile(join(this.dir, 'README.txt'), README, { encoding: 'utf8', flag: 'wx' })
     } catch {

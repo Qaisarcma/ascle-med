@@ -16,7 +16,7 @@ It's a Windows take on [Verci](https://verci.xyz), a Mac app. It's free and open
 ## Download
 
 1. Download **`theaestheticslyrics-1.0.0-win-x64.zip`** from the [latest release](https://github.com/darshanseenivasakumar/theaestheticslyrics/releases/latest). It needs Windows 10 or 11, 64-bit.
-2. Unzip it anywhere, for example into `Documents\theaestheticslyrics`.
+2. Unzip it anywhere you like.
 3. Run **`theaestheticslyrics.exe`**. There's nothing to install. To uninstall, delete the folder.
 
 > [!NOTE]
@@ -79,7 +79,7 @@ Two free sources are asked at the same time:
 - **[LRCLIB](https://lrclib.net)**, an open, community-run lyrics database. It has exact *line* timing for a huge number of songs. Inside each line, the app estimates when each word is sung from its syllables, punctuation and the song's pace. Every line re-syncs to the real time, so small errors never add up.
 - **NetEase Cloud Music**, through its public but undocumented web API. For many songs it has real *per-word* timing, so every word lights exactly when it's sung. You can turn it off in the tray.
 
-Your own lyrics come first. Put `.lrc` files in **Documents\theaestheticslyrics\Lyrics** (tray → **Open Lyrics Folder**), named `Artist - Title.lrc`. Enhanced LRC with `<mm:ss.xx>` word tags is used exactly as written.
+Your own lyrics come first. Put `.lrc` files in the lyrics folder (tray → **Open Lyrics Folder**, which is `%APPDATA%\theaestheticslyrics\Lyrics`), named `Artist - Title.lrc`. Enhanced LRC with `<mm:ss.xx>` word tags is used exactly as written.
 
 Lyrics you've played before load instantly from a local cache. Songs with no synced lyrics show nothing, and the tray tells you so.
 
@@ -87,9 +87,7 @@ Lyrics you've played before load instantly from a local cache. Songs with no syn
 
 - To look lyrics up, the app sends only the song's **title, artist, album and length** to `lrclib.net` and, if precise word timing is on, to `music.163.com`.
 - It has no accounts, analytics, telemetry or ads.
-- Everything else stays on your PC:
-  - settings, lyrics cache and log in `%APPDATA%\theaestheticslyrics`
-  - your own lyrics in `Documents\theaestheticslyrics\Lyrics`
+- Everything else stays on your PC, in `%APPDATA%\theaestheticslyrics`: settings, the lyrics cache, the log and your own lyrics.
 
 ## Troubleshooting
 

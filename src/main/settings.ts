@@ -1,7 +1,8 @@
-import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
+import { readFileSync, renameSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { DEFAULT_COLORS, HEX_COLOR } from '@shared/palette-defaults'
 import { STYLE_IDS, type ColorRole, type ShowOn, type StyleId } from '@shared/types'
+import { makeDirSync } from './dirs'
 
 export type IdleMinutes = 0 | 1 | 2 | 5
 
@@ -122,7 +123,7 @@ export class SettingsStore {
 
   private persist(): void {
     const json = JSON.stringify(this.current, null, 2)
-    mkdirSync(dirname(this.file), { recursive: true })
+    makeDirSync(dirname(this.file))
     const tmp = `${this.file}.tmp`
     try {
       writeFileSync(tmp, json, 'utf8')

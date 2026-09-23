@@ -6,7 +6,10 @@ export interface AppPaths {
   settingsFile: string
   cacheDir: string
   logFile: string
-  /** User-supplied `.lrc` files (Documents\theaestheticslyrics\Lyrics). */
+  /**
+   * User-supplied `.lrc` files, beside the settings. Not in Documents: Windows' ransomware protection
+   * (Controlled folder access) stops a new app from creating folders there.
+   */
   lyricsDir: string
   bridgeScript: string
   trayIcon: string
@@ -27,9 +30,7 @@ export function resolvePaths(): AppPaths {
     settingsFile: join(userData, 'settings.json'),
     cacheDir: join(userData, 'lyrics-cache'),
     logFile: join(userData, 'logs', 'theaestheticslyrics.log'),
-    lyricsDir: process.env['TAL_LYRICS_DIR']
-      ? resolve(process.env['TAL_LYRICS_DIR'])
-      : join(app.getPath('documents'), 'theaestheticslyrics', 'Lyrics'),
+    lyricsDir: process.env['TAL_LYRICS_DIR'] ? resolve(process.env['TAL_LYRICS_DIR']) : join(userData, 'Lyrics'),
     bridgeScript: join(resources, 'smtc-bridge.ps1'),
     trayIcon: join(resources, 'tray.ico'),
     appIcon: join(resources, 'icon.ico')

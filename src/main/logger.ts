@@ -1,5 +1,6 @@
-import { appendFileSync, mkdirSync, renameSync, statSync } from 'node:fs'
+import { appendFileSync, renameSync, statSync } from 'node:fs'
 import { dirname } from 'node:path'
+import { makeDirSync } from './dirs'
 
 export type Log = (message: string) => void
 
@@ -9,7 +10,7 @@ const MAX_BYTES = 1024 * 1024
 export function createLogger(file: string, echo: boolean): Log {
   let written = 0
   try {
-    mkdirSync(dirname(file), { recursive: true })
+    makeDirSync(dirname(file))
     written = statSync(file, { throwIfNoEntry: false })?.size ?? 0
     if (written > MAX_BYTES) {
       renameSync(file, `${file}.1`)
