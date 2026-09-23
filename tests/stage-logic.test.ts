@@ -1,5 +1,44 @@
-import { describe, expect, it } from 'vitest'
-import { GRACE_MS, LockSession, alwaysOverlayVisible, idleShouldOpen } from '../src/main/ui/stage-logic'
+import { describe, expect, it, vi } from 'vitest'
+import {
+  GRACE_MS,
+  LOAD_STUCK_MS,
+  LockSession,
+  alwaysOverlayVisible,
+  idleShouldOpen,
+  loadedWithin
+} from '../src/main/ui/stage-logic'
+
+describe('loadedWithin', () => {
+  it('passes the load result through when the page settles in time', async () => {
+    await expect(loadedWithin(Promise.resolve(true), LOAD_STUCK_MS)).resolves.toBe(true)
+    await expect(loadedWithin(Promise.resolve(false), LOAD_STUCK_MS)).resolves.toBe(false)
+  })
+
+  it('waits through a slow first launch instead of rebuilding the page after a few seconds', async () => {
+    vi.useFakeTimers()
+    try {
+      let finish!: (ok: boolean) => void
+      const result = loadedWithin(new Promise<boolean>((resolve) => (finish = resolve)), LOAD_STUCK_MS)
+      await vi.advanceTimersByTimeAsync(8000)
+      finish(true)
+      await expect(result).resolves.toBe(true)
+      expect(vi.getTimerCount()).toBe(0)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('treats a page still loading after the limit as stuck', async () => {
+    vi.useFakeTimers()
+    try {
+      const result = loadedWithin(new Promise<boolean>(() => {}), LOAD_STUCK_MS)
+      await vi.advanceTimersByTimeAsync(LOAD_STUCK_MS)
+      await expect(result).resolves.toBe(false)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})
 
 describe('alwaysOverlayVisible', () => {
   const facts = { mode: 'always' as const, playing: true, hasLyrics: true, pausedForMs: 0 }

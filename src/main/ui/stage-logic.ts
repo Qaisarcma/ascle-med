@@ -4,6 +4,21 @@ import type { ShowOn } from '@shared/types'
 export const GRACE_MS = 1200
 /** "Always" mode keeps the words up this long after a pause before hiding. */
 export const PAUSE_HIDE_MS = 3000
+/**
+ * A lyrics page still loading after this long is treated as stuck and rebuilt. Loads normally take
+ * ~200 ms, but the first launch of a newly downloaded copy can take many seconds while antivirus
+ * scans the app's files, and rebuilding the page then only starts the wait over.
+ */
+export const LOAD_STUCK_MS = 30_000
+
+/** The page's load result, or false if it is still loading after `ms`. The timer never outlives the race. */
+export function loadedWithin(ready: Promise<boolean>, ms: number): Promise<boolean> {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const stuck = new Promise<false>((resolve) => {
+    timer = setTimeout(() => resolve(false), ms)
+  })
+  return Promise.race([ready, stuck]).finally(() => clearTimeout(timer))
+}
 
 export interface StageFacts {
   mode: ShowOn

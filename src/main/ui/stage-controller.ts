@@ -4,7 +4,7 @@ import { IPC, type DismissRequest, type StageSessionInfo, type StageState } from
 import type { Palette, PlaybackAnchor, StyleId, TimedLyrics, TrackInfo } from '@shared/types'
 import type { Log } from '../logger'
 import type { Settings } from '../settings'
-import { LockSession, alwaysOverlayVisible, idleShouldOpen, type LockReason } from './stage-logic'
+import { LOAD_STUCK_MS, LockSession, alwaysOverlayVisible, idleShouldOpen, loadedWithin, type LockReason } from './stage-logic'
 import { harden, loadPage, secureWebPreferences } from './windows'
 
 type Kind = 'lock' | 'overlay'
@@ -15,11 +15,6 @@ interface StageWindow {
   /** Resolves true once the page has loaded, false if loading failed. */
   ready: Promise<boolean>
 }
-
-/** A lyrics page that has not loaded after this long is rebuilt (loads normally take ~200 ms). */
-const LOAD_TIMEOUT_MS = 3000
-
-const delay = (ms: number): Promise<false> => new Promise((resolve) => setTimeout(() => resolve(false), ms))
 
 export interface StageContent {
   track: TrackInfo | null
@@ -109,8 +104,9 @@ export class StageController {
    */
   async showLyrics(): Promise<void> {
     if (this.session) {
+      // Already up: bring it forward. Still loading: the pending open shows it when ready.
       const win = this.lockWin?.win
-      if (win && !win.isDestroyed()) {
+      if (this.session.isShown && win && !win.isDestroyed()) {
         win.moveTop()
         win.focus()
       }
@@ -128,19 +124,24 @@ export class StageController {
         // Without locking, the hotkey toggles the lyrics screen.
         this.closeLock(false, 'Ctrl+Alt+L pressed again')
       } else if (open.reason === 'idle') {
-        // The hotkey on an idle-opened screen turns it into a hotkey session.
+        // The hotkey on an idle-opened screen turns it into a hotkey session. While the screen is
+        // still loading, the pending open below shows the upgraded session instead.
         const upgraded = new LockSession('hotkey', Date.now(), lockOnReturn)
-        upgraded.markShown(Date.now())
         this.session = upgraded
-        this.sendSessionInfo(upgraded)
+        if (open.isShown) {
+          upgraded.markShown(Date.now())
+          this.sendSessionInfo(upgraded)
+        }
       }
       return
     }
-    const session = new LockSession(reason, Date.now(), lockOnReturn)
-    this.session = session
+    this.session = new LockSession(reason, Date.now(), lockOnReturn)
     const requestedAt = Date.now()
     const sw = await this.readyLockWindow()
-    if (this.session !== session) return
+    // While the page loaded (seconds on a cold first launch), the screen may have been closed by
+    // Ctrl+Alt+L again or upgraded from idle to hotkey: whichever session is current is shown, once.
+    const session = this.session
+    if (!session || session.isShown) return
     if (!sw) {
       this.session = null
       this.deps.log('stage: lyrics screen could not be shown')
@@ -163,15 +164,15 @@ export class StageController {
       return
     }
     const how = session.locksOnClose ? ', locks on return' : session.closesOnAnyInput ? '' : ', Esc closes'
-    this.deps.log(`stage: lock screen opened (${reason}${how}) in ${Date.now() - requestedAt} ms`)
+    this.deps.log(`stage: lock screen opened (${session.reason}${how}) in ${Date.now() - requestedAt} ms`)
     this.deps.onLockChange?.(true)
   }
 
-  /** The loaded lock window, rebuilding it once if its page is stuck or failed to load. */
+  /** The loaded lock window, rebuilding it once if its page failed to load or is stuck. A slow load is waited for. */
   private async readyLockWindow(): Promise<StageWindow | null> {
     for (let attempt = 1; attempt <= 2; attempt++) {
       const sw = this.ensure('lock')
-      const loaded = await Promise.race([sw.ready, delay(LOAD_TIMEOUT_MS)])
+      const loaded = await loadedWithin(sw.ready, LOAD_STUCK_MS)
       if (loaded && !sw.win.isDestroyed()) return sw
       this.deps.log(`stage: lyrics screen did not load (attempt ${attempt}), rebuilding it`)
       this.destroy(sw)
