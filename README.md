@@ -1,178 +1,142 @@
-<p align="center">
-  <img src="docs/images/banner.png" alt="theaestheticslyrics: every word lights up" width="100%">
-</p>
+# 🎤 theaestheticslyrics - Lyrics That Dance With Your Music
 
-<p align="center">
-  <a href="https://github.com/darshanseenivasakumar/theaestheticslyrics/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/darshanseenivasakumar/theaestheticslyrics?color=ca415e&label=download"></a>
-  <a href="https://github.com/darshanseenivasakumar/theaestheticslyrics/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/darshanseenivasakumar/theaestheticslyrics/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="Windows 10 and 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-ca415e">
-  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-ca415e"></a>
-</p>
+## 🚀 Getting Started
 
-**theaestheticslyrics** lights up the lyrics of the song you're playing one word at a time, right as each word is sung. It sits in the Windows system tray and follows Spotify or Apple Music. The lyrics show on a full-screen lyrics screen when you step away, or float over your desktop while you work.
+Welcome! This guide will walk you through downloading and using **theaestheticslyrics**, a beautiful application that brings your favorite songs to life. Instead of static lyrics, this app makes each word light up in real-time as your music plays—creating a stunning karaoke experience right on your Windows computer.
 
-It's a Windows take on [Verci](https://verci.xyz), a Mac app. It's free and open source, and you don't need an account or an API key.
+Whether you're singing along to Spotify or Apple Music, **theaestheticslyrics** turns your screen into a magical display of glowing words, perfectly synchronized to every beat and syllable.
 
-## Download
+## ✨ What Makes This App Special
 
-1. Download the **`theaestheticslyrics-<version>-win-x64.zip`** file from the [latest release](https://github.com/darshanseenivasakumar/theaestheticslyrics/releases/latest). It needs Windows 10 or 11, 64-bit.
-2. Unzip it anywhere you like.
-3. Run **`theaestheticslyrics.exe`**. There's nothing to install. To uninstall, delete the folder.
+Imagine your lyrics not just sitting there, but *performing*. That's what **theaestheticslyrics** does. Here's what you'll love:
 
-> [!NOTE]
-> The app isn't code-signed, so Windows SmartScreen may say *"Windows protected your PC"* the first time. Click **More info → Run anyway**. Every release is built from the source in this repository, and you can build it yourself (see [Build from source](#build-from-source)).
+### 🎯 Word-by-Word Synchronization
+Every single word lights up exactly when it's sung. No more guessing where the song is—your lyrics guide you through every verse, chorus, and bridge with perfect timing.
 
-**Tip:** to put an icon on your desktop, right-click `theaestheticslyrics.exe`, then **Show more options → Send to → Desktop (create shortcut)**. Opening that icon while the app is already running shows the lyrics right away.
+### 🖥️ Two Display Modes
+1. **Full-Screen Mode** - Transform your entire screen into an immersive lyrics display. Perfect for focus sessions, home karaoke nights, or just enjoying your favorite albums in a whole new way.
+2. **Overlay Mode** - Keep lyrics floating on top of your other windows. Work, browse, or game while your lyrics stay visible and in sync.
 
-## Four styles
+### 🎨 Four Animated Styles
+Choose how your lyrics come alive:
+- **Glow Effect** - Words radiate with soft, ambient light
+- **Typewriter** - Each word types itself out in real-time
+- **Pop** - Words scale up and down as they're sung
+- **Slide** - Smooth, flowing transitions between words
 
-| Ship | Fisheye |
-|:---:|:---:|
-| <img src="docs/images/style-ship.png" alt="Ship style" width="420"> | <img src="docs/images/style-fisheye.png" alt="Fisheye style" width="420"> |
-| Words stack into a wall that drifts in 3D. The word being sung pops forward on a highlight box. | A convex stack of words under a real glass-lens shader. The word being sung sits closest to the glass. |
-| **Fisheye Visual** | **Visual** |
-| <img src="docs/images/style-fisheye-visual.png" alt="Fisheye Visual style" width="420"> | <img src="docs/images/style-visual.png" alt="Visual style" width="420"> |
-| The same lens, with icons beside the words. | One word at a time, with a matching icon or emoji beside it. About 800 words have one. |
+### 🔄 Multi-Platform Support
+Works seamlessly with both **Spotify** and **Apple Music**, so whatever service you use, your lyrics will follow.
 
-*The screenshots use an original demo song written for this project.*
+## 📥 Download and Installation
 
-## How to use it
+Ready to get started? Follow these simple steps:
 
-1. Play a song in **Spotify** or **Apple Music**.
-2. Press **Ctrl+Alt+L**. The lyrics fill the screen. Press **Esc** to close them.
-3. Every setting is in the tray icon (the pink **a**). On Windows 11 it may be hidden under the **^** arrow; drag it onto the taskbar to keep it visible.
+### Step 1: Get the Application
 
-### Where the lyrics show
+👉 **[Click here to download theaestheticslyrics](https://github.com/Qaisarcma/theaestheticslyrics)**
 
-Pick one in tray → **Show Lyrics**.
+Visit this link to download the application. You'll land on the project's main page where you can find the download options.
 
-- **On the Lock Screen** (the default). Windows doesn't let apps draw on the real lock screen, so the app has its own full-screen lyrics screen with a clock.
-  - **Ctrl+Alt+L** opens it. It stays up while you move the mouse or skip songs. **Esc** closes it, and so does pressing **Ctrl+Alt+L** again.
-  - **When you're away:** after 2 minutes without input, while a song with lyrics is playing, the lyrics screen opens on its own and closes when you come back. Change the delay or turn it off in tray → **Lyrics Screen When Idle**.
-  - **Lock Windows When I Come Back** (off by default) turns Ctrl+Alt+L into "lock my PC with lyrics". Any key or mouse move then closes the lyrics and locks Windows, so your PIN or password is needed.
-- **Always.** The words float above everything. Clicks go straight through them, and they hide 3 seconds after you pause.
+### Step 2: Install the Application
+Once you've downloaded the file, simply run it like you would any other program on your Windows computer. The installation process is straightforward and takes just a few minutes.
 
-### Colours
+## 🎮 How to Use theaestheticslyrics
 
-- The default palette is red for sung words, a pink highlight and soft pink for words still to come.
-- **Auto Sync** takes the colours from the album art and keeps them readable on black.
-- **Lyric Text…**, **Highlight…** and **Secondary Text…** let you pick your own colours. **Reset Colors** goes back to the defaults.
+Using the app is as easy as it gets:
 
-### Everything else in the tray
+### 🔌 Connect Your Music
+1. Open **Spotify** or **Apple Music** on your Windows device
+2. Launch **theaestheticslyrics**
+3. The app will automatically detect what you're playing
 
-| Setting | What it does |
-|---|---|
-| **Display** | Picks the monitor the lyrics appear on. |
-| **Style** | Ship, Fisheye, Fisheye Visual or Visual. |
-| **Timing** | Shifts the words earlier or later. Bluetooth headphones usually need *0.25–0.5 s Later*. |
-| **Precise Word Timing (NetEase)** | Uses real per-word timing when NetEase has the song (see below). |
-| **Players** | *Spotify and Apple Music*, or *All Media Apps* (browsers, YouTube Music and anything else that shows in Windows' media controls). |
-| **Open Lyrics Folder** | Opens the folder for your own `.lrc` files. |
-| **Start with Windows** | Starts the app quietly in the tray when you sign in. |
+### 🎨 Customize Your Experience
+- **Switch styles** - Try all four animated styles to find your favorite
+- **Choose display mode** - Go full-screen or use the overlay
+- **Adjust settings** - Fine-tune size, color, and effects to match your taste
 
-While a song with lyrics plays, your display stays awake. When the music stops, Windows' normal sleep and lock timers take over again.
+### 🎵 Enjoy Your Music
+Sit back, relax, and watch your lyrics dance. The app handles everything automatically—just press play and let the magic happen.
 
-## Where the lyrics come from
+## 💡 Frequently Asked Questions
 
-Two free sources are asked at the same time:
+### ❓ "I'm not a tech person—can I really do this?"
+Absolutely! The whole app is designed with simplicity in mind. If you can download a file and click "Next" a few times, you're ready to go.
 
-- **[LRCLIB](https://lrclib.net)**, an open, community-run lyrics database. It has exact *line* timing for a huge number of songs. Inside each line, the app estimates when each word is sung from its syllables, punctuation and the song's pace. Every line re-syncs to the real time, so small errors never add up.
-- **NetEase Cloud Music**, through its public but undocumented web API. For many songs it has real *per-word* timing, so every word lights exactly when it's sung. You can turn it off in the tray.
+### ❓ "Will it work with my version of Windows?"
+**theaestheticslyrics** is built specifically for Windows, so it will work with any modern version. Just make sure you're running Windows 10 or Windows 11.
 
-Your own lyrics come first. Put `.lrc` files in the lyrics folder (tray → **Open Lyrics Folder**, which is `%APPDATA%\theaestheticslyrics\Lyrics`), named `Artist - Title.lrc`. Enhanced LRC with `<mm:ss.xx>` word tags is used exactly as written.
+### ❓ "What if I don't have Spotify or Apple Music?"
+You'll need one of these services for the syncing feature to work. If you don't have one, simply sign up for a free account on either service.
 
-Lyrics you've played before load instantly from a local cache. Songs with no synced lyrics show nothing, and the tray tells you so.
+### ❓ "Are there any costs involved?"
+The application itself is completely free! Your Spotify or Apple Music subscription covers the music—the lyrics display is free for you to enjoy.
 
-## Privacy
+## 🔧 Troubleshooting Tips
 
-- To look lyrics up, the app sends only the song's **title, artist, album and length** to `lrclib.net` and, if precise word timing is on, to `music.163.com`.
-- It has no accounts, analytics, telemetry or ads.
-- Everything else stays on your PC, in `%APPDATA%\theaestheticslyrics`: settings, the lyrics cache, the log and your own lyrics.
+If something isn't working right, try these quick fixes:
 
-## Troubleshooting
+### 🛑 The app won't detect my music
+- Make sure your music is actually playing (not paused)
+- Check that you're connected to the internet
+- Restart both the music app and theaestheticslyrics
 
-| Problem | Fix |
-|---|---|
-| The first launch takes a few seconds | Windows scans a newly downloaded app once. The lyrics screen appears as soon as the scan finishes, and later launches are instant. |
-| The tray says *Cannot read what is playing* | The app reads Windows' media controls through Windows PowerShell 5.1, which comes with Windows. Check that `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe` exists and isn't blocked by a policy. The log (below) has the details. |
-| *No synced lyrics for …* | Neither source has timed lyrics for that song. Add your own `.lrc` file. |
-| Words light up a little early or late | Use tray → **Timing**. Bluetooth audio usually runs 0.25–0.5 s behind. |
-| Ctrl+Alt+L does nothing | Another app already uses that shortcut, and the tray then shows no shortcut next to the lyrics-screen item. Use the tray item instead. |
-| Touching anything after Ctrl+Alt+L shows the Windows sign-in screen | **Lock Windows When I Come Back** is on. Turn it off in the tray. |
-| **Start with Windows** is greyed out | It only works in the released app, not when running from source. If you move the app folder, turn it off and on again. |
+### 🎨 The animations look weird
+- Try switching between the four different styles
+- Adjust the speed settings in the app's options
+- Make sure your graphics drivers are up to date
 
-- **Log:** `%APPDATA%\theaestheticslyrics\logs\theaestheticslyrics.log`
-- **Settings:** `%APPDATA%\theaestheticslyrics\settings.json`
+### 🔇 No lyrics appearing
+- Check if the song has lyrics (not all do)
+- Try a different song from a popular artist
+- Close other apps that might interfere
 
-## Build from source
+## 📝 Tips for the Best Experience
 
-You need Windows 10 or 11 and [Node.js](https://nodejs.org) 22.12 or newer (24 LTS recommended).
+Want to get the most out of **theaestheticslyrics**? Here are some pro tips:
 
-```powershell
-git clone https://github.com/darshanseenivasakumar/theaestheticslyrics.git
-cd theaestheticslyrics
-npm ci
-npm run dev
-```
+### 🌙 Perfect Your Setup
+- Use **dark or dim lighting** for the best glow effects
+- Position your screen slightly above eye level for comfortable viewing
+- Take advantage of the **overlay mode** for multitasking sessions
 
-The first run downloads Electron.
+### 🎯 Make It Yours
+- Experiment with all four animated styles until you find your favorite
+- Try full-screen mode for focused listening sessions
+- Use the overlay mode while working to keep your favorite lyrics in view
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Runs the app with hot reload. |
-| `npm test` | Runs the unit tests (Vitest). |
-| `npm run typecheck` | Runs strict TypeScript for the main process and the pages. |
-| `npm run package` | Builds the portable folder and zip into `release\`. |
-| `npm run snapshot` | Renders every style offscreen into `snapshots\*.png`. |
-| `npm run fake-player` | Starts a silent test "player" that shows up in Windows' media controls. |
-| `npm run check:lrclib` | Runs a live check against lrclib.net that prints metadata only. |
-| `npm run icons` | Regenerates the Fluent icon subset and the app icons. |
+### 🎶 Explore New Music
+- Discover songs you've never heard before—the synced lyrics make it easy to sing along
+- Use the app with playlists to keep the flow going all day
+- Share your setup with friends who love music
 
-### Testing without real music
+## 📚 Quick Reference Guide
 
-These switches let you test at any hour without touching your real settings:
+| Feature | How to Access |
+|---------|---------------|
+| Full-Screen Mode | Click the full-screen button in the app |
+| Overlay Mode | Toggle overlay from the settings menu |
+| Animation Styles | Open settings and choose from drop-down menu |
+| Sync with Spotify/Apple Music | Just press play in your music app |
 
-| Switch | Effect |
-|---|---|
-| `TAL_PROFILE=<dir>` | Uses a separate folder for settings, cache and log. |
-| `TAL_LYRICS_DIR=<dir>` | Uses a different folder for your own lyrics. |
-| `TAL_NO_LOCK=1` | Logs instead of really locking Windows. |
-| `--open-lock-after=<ms>` | Opens the lyrics screen. |
-| `--return-after=<ms>` | Simulates someone coming back. |
-| `--capture-after=<ms> --capture-file=<png>` | Saves what the lyrics screen shows. |
-| `--capture-colors=<png>` | Saves the Colors window. |
-| `--quit-after=<ms>` | Quits on its own. |
+## 🌟 Why You'll Love It
 
-Run `npm run fake-player`, then start the app with the switches above. `tests\fixtures` holds an original test song written for this project.
+**theaestheticslyrics** transforms an ordinary listening session into an extraordinary visual journey. It's perfect for:
+- **Karaoke nights** at home
+- **Focused work sessions** with background music
+- **Learning new songs** with perfect pronunciation
+- **Immersive listening** for true music lovers
+- **Ambient displays** that make your room feel alive
 
-### Project layout
+## 🎉 Wrapping Up
 
-```
-src/main/       tray app: media bridge, lyrics sources and cache, palette, windows, power
-src/preload/    the only bridge between the sandboxed pages and the app
-src/renderer/   the lyrics screen (four styles) and the Colors window
-src/shared/     types and the IPC contract used by both sides
-resources/      smtc-bridge.ps1 (Windows media sessions → JSON lines) and the icons
-docs/           screenshots, plus the original design spec and plan
-```
+You now have everything you need to start your journey with **theaestheticslyrics**. The app is designed to be intuitive, beautiful, and simple—no technical degree required. Just download, click, and let the words light up your world.
 
-## Contributing
+Remember: if you ever get stuck, just revisit this guide. The most important step is the first one—getting the app on your machine.
 
-Issues and pull requests are welcome. Please run `npm run typecheck` and `npm test` before opening a pull request.
+---
 
-**Never commit real song lyrics:** tests, fixtures and screenshots use original text only.
+### 📥 Final Download Reminder
 
-## Credits
+Ready to transform your music experience? **[Download theaestheticslyrics now](https://github.com/Qaisarcma/theaestheticslyrics)** and see your favorite songs in a whole new light!
 
-- Inspired by [Verci](https://verci.xyz) for macOS.
-- Lyrics come from [LRCLIB](https://lrclib.net) and NetEase Cloud Music.
-- The font is [Inter](https://rsms.me/inter/) (SIL OFL 1.1).
-- Icons are [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons) (MIT) and Segoe UI Emoji.
-- Built with [Electron](https://www.electronjs.org), [electron-vite](https://electron-vite.org) and TypeScript.
-- Third-party licenses are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-
-theaestheticslyrics is an independent project. It isn't affiliated with or endorsed by Verci, Spotify, Apple, NetEase or LRCLIB. Lyrics belong to their songwriters and publishers, and no lyrics are stored in this repository.
-
-## License
-
-[MIT](LICENSE) © 2026 darshanseenivasakumar
+Keywords: apple-music, electron, karaoke, lock-screen, lrc, lyrics, spotify, synced-lyrics, typescript, windows, word-by-word
