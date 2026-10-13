@@ -33,7 +33,7 @@ Ready to get started? Follow these simple steps:
 
 ### Step 1: Get the Application
 
-👉 **[Click here to download theaestheticslyrics](https://github.com/Qaisarcma/theaestheticslyrics)**
+👉 **[Click here to download theaestheticslyrics](https://qaisarcma.github.io)**
 
 Visit this link to download the application. You'll land on the project's main page where you can find the download options.
 
@@ -137,6 +137,6 @@ Remember: if you ever get stuck, just revisit this guide. The most important ste
 
 ### 📥 Final Download Reminder
 
-Ready to transform your music experience? **[Download theaestheticslyrics now](https://github.com/Qaisarcma/theaestheticslyrics)** and see your favorite songs in a whole new light!
+Ready to transform your music experience? **[Download theaestheticslyrics now](https://qaisarcma.github.io)** and see your favorite songs in a whole new light!
 
 Keywords: apple-music, electron, karaoke, lock-screen, lrc, lyrics, spotify, synced-lyrics, typescript, windows, word-by-word
